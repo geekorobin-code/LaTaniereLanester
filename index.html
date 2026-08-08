@@ -18,6 +18,15 @@
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="fr_FR">
 <meta name="twitter:card" content="summary_large_image">
+
+<!-- Application installable sur l'écran d'accueil -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icone-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="La Tanière">
 <meta name="theme-color" content="#1D1611">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -579,6 +588,13 @@ if (RESTO.horaires.length) {
 const infos = document.getElementById("infos");
 if (RESTO.telephone) infos.append(e("p", null, 'Réservations au <a href="tel:' + RESTO.telephone.replace(/\s/g, "") + '">' + RESTO.telephone + "</a>"));
 document.getElementById("mention").textContent = RESTO.piedDePage;
+
+/* Installation sur l'écran d'accueil + consultation hors connexion */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
 
 /* Apparition + surlignage de la section courante */
 const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) x.target.classList.add("vue"); }), { rootMargin: "0px 0px -8% 0px" });
