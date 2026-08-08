@@ -4,7 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La Tanière — La carte</title>
-<meta name="description" content="La carte du restaurant La Tanière, mise à jour régulièrement.">
+<meta name="description" content="La carte du restaurant La Tanière à Lanester, mise à jour régulièrement.">
+
+<!-- Aperçu affiché quand le lien est partagé sur Facebook, WhatsApp, etc.
+     ⚠ L'adresse ci-dessous doit correspondre à celle de ton site,
+     et le fichier apercu.jpg doit être déposé à côté de index.html. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="La Tanière — La carte">
+<meta property="og:description" content="Entrées, viandes, poissons, burgers, salades, menu midi et menu enfant. Toujours à jour.">
+<meta property="og:url" content="https://geekorobin-code.github.io/LaTaniereLanester/">
+<meta property="og:image" content="https://geekorobin-code.github.io/LaTaniereLanester/apercu.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1D1611">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -180,23 +193,32 @@ body::before{
   color:var(--laiton);font-weight:500
 }
 
-.scene{position:relative;width:100%;aspect-ratio:1260/708;overflow:hidden}
-@media (min-width:701px){
-  .scene{aspect-ratio:auto;height:clamp(17rem,30vw,23rem)}
+/* La photo garde ses proportions d'origine : rien n'est coupé.
+   Les bords se fondent dans le fond grâce au masque. */
+.scene{
+  position:relative;width:100%;max-width:47rem;margin:0 auto;
+  aspect-ratio:1260/708;
+  animation:apparait 1.5s ease forwards;
+  -webkit-mask-image:
+    linear-gradient(to bottom,transparent 0,#000 11%,#000 86%,transparent 100%),
+    linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:
+    linear-gradient(to bottom,transparent 0,#000 11%,#000 86%,transparent 100%),
+    linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%);
+  mask-composite:intersect
 }
+@keyframes apparait{from{opacity:0}to{opacity:1}}
 .scene .cliche{
-  position:absolute;inset:-2px;
-  background-size:cover;background-position:center 40%;
-  filter:saturate(.9) contrast(1.03);
-  transform:scale(1.06);
-  animation:respire 2.2s cubic-bezier(.2,.7,.2,1) forwards
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  filter:saturate(.9) contrast(1.03)
 }
-@keyframes respire{to{transform:scale(1)}}
 .scene .voile{
   position:absolute;inset:0;
   background:linear-gradient(to bottom,
-    var(--ecorce) 0%,rgba(29,22,17,.55) 7%,rgba(29,22,17,.1) 24%,
-    rgba(29,22,17,.1) 62%,rgba(29,22,17,.62) 88%,var(--ecorce) 100%)
+    rgba(29,22,17,.38) 0%,rgba(29,22,17,.06) 26%,
+    rgba(29,22,17,.06) 68%,rgba(29,22,17,.42) 100%)
 }
 
 .socle{padding:1.7rem 1.35rem 0}
@@ -341,7 +363,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .section{opacity:1;transform:none;transition:none}
-  .scene .cliche{animation:none;transform:scale(1)}
+  .scene{animation:none}
 }
 
 /* ─── Impression : bascule en version papier ─── */
