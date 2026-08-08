@@ -166,65 +166,47 @@ body::before{
 .enveloppe{position:relative;z-index:1;max-width:44rem;margin:0 auto;padding:0 1.35rem 5rem}
 
 /* ─── Bannière ─── */
-.banniere{
-  position:relative;width:100%;
-  min-height:clamp(21rem,62vh,29rem);
-  display:flex;align-items:flex-end;justify-content:center;
-  overflow:hidden;isolation:isolate
-}
-.banniere .cliche{
-  position:absolute;inset:-2px;z-index:-3;
-  background-size:cover;background-position:center 42%;
-  filter:saturate(.88) contrast(1.04);
-  transform:scale(1.07);
-  animation:respire 2.2s cubic-bezier(.2,.7,.2,1) forwards
-}
-@keyframes respire{to{transform:scale(1)}}
-.banniere .voile{
-  position:absolute;inset:0;z-index:-1;
-  background:
-    linear-gradient(to bottom,rgba(29,22,17,.62) 0%,rgba(29,22,17,.58) 30%,rgba(29,22,17,.88) 68%,rgba(29,22,17,.985) 88%,var(--ecorce) 100%),
-    radial-gradient(120% 80% at 50% 100%,rgba(29,22,17,.55),transparent 70%)
-}
-/* Sur petit écran, la photo s'affiche en entier : personne n'est coupé */
-@media (max-width:700px){
-  .banniere{min-height:0}
-  .banniere .cliche{
-    inset:0 0 auto 0;height:auto;aspect-ratio:1260/708;
-    transform:none;animation:none
-  }
-  .banniere .voile{
-    inset:0 0 auto 0;height:auto;aspect-ratio:1260/708;
-    background:linear-gradient(to bottom,
-      rgba(29,22,17,.34) 0%,rgba(29,22,17,.18) 42%,
-      rgba(29,22,17,.72) 76%,rgba(29,22,17,.96) 93%,var(--ecorce) 100%)
-  }
-  .banniere-contenu{padding-top:calc(56.2vw - 1.4rem)}
-}
+.banniere{position:relative;width:100%;text-align:center;overflow:hidden}
 
-.banniere-contenu{
-  width:100%;max-width:44rem;padding:5rem 1.35rem 2.6rem;text-align:center;
-  text-shadow:0 1px 14px rgba(0,0,0,.5)
-}
-
+.chapeau{padding:2.7rem 1.35rem 1.5rem}
 .ecusson{
-  display:block;width:84px;height:84px;margin:0 auto 1.15rem;
+  display:block;width:84px;height:84px;margin:0 auto 1rem;
   border-radius:50%;background:#0B0906;
   border:1px solid rgba(217,164,65,.45);
-  box-shadow:0 6px 26px rgba(0,0,0,.55)
+  box-shadow:0 6px 26px rgba(0,0,0,.5)
 }
 .eyebrow{
   font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;
-  color:var(--laiton);font-weight:500;margin-bottom:.5rem
+  color:var(--laiton);font-weight:500
 }
+
+.scene{position:relative;width:100%;aspect-ratio:1260/708;overflow:hidden}
+@media (min-width:701px){
+  .scene{aspect-ratio:auto;height:clamp(17rem,30vw,23rem)}
+}
+.scene .cliche{
+  position:absolute;inset:-2px;
+  background-size:cover;background-position:center 40%;
+  filter:saturate(.9) contrast(1.03);
+  transform:scale(1.06);
+  animation:respire 2.2s cubic-bezier(.2,.7,.2,1) forwards
+}
+@keyframes respire{to{transform:scale(1)}}
+.scene .voile{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    var(--ecorce) 0%,rgba(29,22,17,.55) 7%,rgba(29,22,17,.1) 24%,
+    rgba(29,22,17,.1) 62%,rgba(29,22,17,.62) 88%,var(--ecorce) 100%)
+}
+
+.socle{padding:1.7rem 1.35rem 0}
 .enseigne{
   font-family:var(--titre);font-weight:300;font-size:clamp(2.9rem,12.5vw,4.4rem);
   line-height:.95;letter-spacing:-.015em
 }
 .sceau{
-  display:inline-flex;align-items:center;gap:.5rem;margin-top:1.3rem;
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;
   padding:.42rem .95rem;border:1px solid var(--trait);border-radius:999px;
-  background:rgba(29,22,17,.5);text-shadow:none;
   font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--laiton)
 }
 .sceau .point{width:5px;height:5px;border-radius:50%;background:var(--mousse);flex:none}
@@ -359,15 +341,15 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .section{opacity:1;transform:none;transition:none}
-  .banniere .cliche{animation:none;transform:scale(1)}
+  .scene .cliche{animation:none;transform:scale(1)}
 }
 
 /* ─── Impression : bascule en version papier ─── */
 @media print{
   body{background:#fff;color:#111}
-  body::before,.nav,.vignette,.arbre,.banniere .cliche,.banniere .voile{display:none}
-  .banniere{min-height:0;display:block}
-  .banniere-contenu{padding:0 0 1rem;text-shadow:none}
+  body::before,.nav,.vignette,.arbre,.scene{display:none}
+  .chapeau{padding:0 0 .8rem}
+  .socle{padding:0 0 1rem}
   .enseigne{color:#111}
   .ecusson{width:56px;height:56px;box-shadow:none}
   .enveloppe{max-width:100%;padding:0}
@@ -385,11 +367,15 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 <body>
 
 <header class="banniere">
-  <div class="cliche" id="cliche"></div>
-  <div class="voile"></div>
-  <div class="banniere-contenu">
+  <div class="chapeau">
     <img class="ecusson" id="logo" alt="Logo de La Tanière">
     <p class="eyebrow" id="eyebrow"></p>
+  </div>
+  <div class="scene">
+    <div class="cliche" id="cliche"></div>
+    <div class="voile"></div>
+  </div>
+  <div class="socle">
     <h1 class="enseigne" id="enseigne"></h1>
     <p class="sceau"><span class="point"></span><span id="maj"></span></p>
   </div>
