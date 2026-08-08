@@ -186,6 +186,22 @@ body::before{
     linear-gradient(to bottom,rgba(29,22,17,.62) 0%,rgba(29,22,17,.58) 30%,rgba(29,22,17,.88) 68%,rgba(29,22,17,.985) 88%,var(--ecorce) 100%),
     radial-gradient(120% 80% at 50% 100%,rgba(29,22,17,.55),transparent 70%)
 }
+/* Sur petit écran, la photo s'affiche en entier : personne n'est coupé */
+@media (max-width:700px){
+  .banniere{min-height:0}
+  .banniere .cliche{
+    inset:0 0 auto 0;height:auto;aspect-ratio:1260/708;
+    transform:none;animation:none
+  }
+  .banniere .voile{
+    inset:0 0 auto 0;height:auto;aspect-ratio:1260/708;
+    background:linear-gradient(to bottom,
+      rgba(29,22,17,.34) 0%,rgba(29,22,17,.18) 42%,
+      rgba(29,22,17,.72) 76%,rgba(29,22,17,.96) 93%,var(--ecorce) 100%)
+  }
+  .banniere-contenu{padding-top:calc(56.2vw - 1.4rem)}
+}
+
 .banniere-contenu{
   width:100%;max-width:44rem;padding:5rem 1.35rem 2.6rem;text-align:center;
   text-shadow:0 1px 14px rgba(0,0,0,.5)
