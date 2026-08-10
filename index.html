@@ -494,6 +494,7 @@ body::before{
   color:rgba(163,143,120,.6)
 }
 .compteur b{color:var(--laiton);font-weight:500;font-variant-numeric:tabular-nums}
+.jeton{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 
 /* Petit ours discret : un appui dessus révèle le nombre de visites */
 .jeton{
@@ -747,43 +748,99 @@ if (RESTO.telephone) infos.append(e("p", null, 'Réservations au <a href="tel:' 
 document.getElementById("mention").textContent = RESTO.piedDePage;
 
 /* Compteur de visites.
-   La visite est enregistrée au chargement, mais le chiffre n'est affiché
-   que si l'on appuie sur le petit ours en bas à gauche. */
+   ------------------------------------------------------------------
+   La visite est enregistrée au chargement de la page.
+   Le chiffre n'apparaît que si l'on appuie sur le petit ours en bas à gauche.
+   Ce premier appui annule aussi la visite en cours et mémorise l'appareil :
+   les visites suivantes depuis ce téléphone ou cet ordinateur ne seront
+   plus jamais comptées. Appui long d'une seconde pour refaire compter. */
+
 const jeton = document.getElementById("jeton");
+const ligneCompteur = document.getElementById("compteur");
 jeton.style.backgroundImage = "url('" + IMAGES.logo + "')";
 
+const CLE_PATRON = "taniere-patron";
+
+function memoire(valeur) {
+  try {
+    if (valeur === undefined) return localStorage.getItem(CLE_PATRON) === "1";
+    if (valeur) localStorage.setItem(CLE_PATRON, "1");
+    else localStorage.removeItem(CLE_PATRON);
+  } catch (err) { /* stockage indisponible : on retombe sur la variable ci-dessous */ }
+  return false;
+}
+
+let patron = memoire();
 let visites = null;
 
-async function compter() {
-  const services = [
-    ["https://api.counterapi.dev/v1/" + RESTO.compteur + "/carte/up", d => d.count],
-    ["https://countapi.mileshilliard.com/api/v1/hit/" + RESTO.compteur + "/carte", d => d.value]
-  ];
-  for (const [url, lire] of services) {
-    try {
-      const rep = await fetch(url);
-      if (!rep.ok) continue;
-      const n = lire(await rep.json());
+async function appel(sens) {   // sens = "up" (compter) ou "down" (annuler)
+  try {
+    const r = await fetch("https://api.counterapi.dev/v1/" + RESTO.compteur + "/carte/" + sens);
+    if (r.ok) {
+      const n = (await r.json()).count;
       if (typeof n === "number") return n;
-    } catch (err) { /* on essaie le service suivant */ }
+    }
+  } catch (err) { /* on tente le service de secours */ }
+
+  if (sens === "up") {
+    try {
+      const r = await fetch("https://countapi.mileshilliard.com/api/v1/hit/" + RESTO.compteur + "/carte");
+      if (r.ok) {
+        const n = (await r.json()).value;
+        if (typeof n === "number") return n;
+      }
+    } catch (err) { /* les deux services sont muets */ }
   }
   return null;
 }
 
 if (RESTO.compteur) {
-  compter().then(n => { visites = n; });
+  appel("up").then(async n => {
+    visites = n;
+    if (patron && n !== null) {          // appareil connu : on retire aussitôt la visite
+      const apres = await appel("down");
+      visites = apres !== null ? apres : n - 1;
+    }
+  });
 }
 
+function afficher(texte) {
+  ligneCompteur.innerHTML = texte;
+  ligneCompteur.hidden = false;
+}
+
+let appuiLong = null;
+
+jeton.addEventListener("pointerdown", () => {
+  appuiLong = setTimeout(() => {
+    appuiLong = null;
+    patron = false;
+    memoire(false);
+    afficher("Cet appareil est de nouveau compté");
+  }, 1000);
+});
+
+["pointerup", "pointerleave", "pointercancel"].forEach(ev =>
+  jeton.addEventListener(ev, () => { clearTimeout(appuiLong); })
+);
+
 jeton.addEventListener("click", async () => {
-  const el = document.getElementById("compteur");
-  if (!el.hidden) { el.hidden = true; return; }
-  el.hidden = false;
-  if (visites === null) {
-    el.textContent = "Compteur momentanément indisponible";
-    visites = await compter();
-    if (visites === null) return;
+  if (appuiLong === null) { appuiLong = 0; return; }   // l'appui long vient d'agir
+
+  if (!ligneCompteur.hidden) { ligneCompteur.hidden = true; return; }
+
+  if (!patron) {                       // première fois : on annule la visite en cours
+    patron = true;
+    memoire(true);
+    const apres = await appel("down");
+    if (apres !== null) visites = apres;
+    else if (visites !== null) visites -= 1;
   }
-  el.innerHTML = "<b>" + visites.toLocaleString("fr-FR") + "</b> visites";
+
+  if (visites === null) visites = await appel("up");
+  if (visites === null) { afficher("Compteur momentanément indisponible"); return; }
+
+  afficher("<b>" + visites.toLocaleString("fr-FR") + "</b> visites &nbsp;·&nbsp; la vôtre n'est pas comptée");
 });
 
 /* Installation sur l'écran d'accueil + consultation hors connexion */
