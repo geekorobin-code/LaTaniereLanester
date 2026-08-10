@@ -48,6 +48,7 @@ const RESTO = {
     "Ouvert tous les jours — 12h à 14h et 19h à 21h30",
     "Vendredi et samedi : service du soir jusqu'à 22h"
   ],
+  compteur:   "lataniere-lanester",   // identifiant du compteur de visites ("" pour le retirer)
   piedDePage: "Prix en euros, taxes et service compris. Liste des allergènes disponible sur demande auprès de votre serveur."
 };
 
@@ -488,6 +489,11 @@ body::before{
 .pied .infos p{font-size:.92rem}
 .pied .infos a{color:var(--laiton);text-decoration:none;border-bottom:1px solid var(--trait)}
 .mention{font-size:.78rem;color:var(--fumee);max-width:26rem;margin:0 auto;line-height:1.6}
+.compteur{
+  margin-top:1.4rem;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(163,143,120,.6)
+}
+.compteur b{color:var(--laiton);font-weight:500;font-variant-numeric:tabular-nums}
 
 a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 
@@ -515,6 +521,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
   .plat-desc,.choix-desc{color:#8a6a2a}
   .condition,.mention,.notes p{color:#555}
   .coordonnees,.coordonnees a,.coordonnees .heures{color:#444;border:none}
+  .compteur{display:none}
   .formule,.notes{background:#f6f2ea;border-color:#ddd}
 }
 </style>
@@ -544,6 +551,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
   <footer class="pied">
     <div class="infos" id="infos"></div>
     <p class="mention" id="mention"></p>
+    <p class="compteur" id="compteur" hidden></p>
   </footer>
 </div>
 
@@ -727,6 +735,20 @@ if (RESTO.horaires.length) {
 const infos = document.getElementById("infos");
 if (RESTO.telephone) infos.append(e("p", null, 'Réservations au <a href="tel:' + RESTO.telephone.replace(/\s/g, "") + '">' + RESTO.telephone + "</a>"));
 document.getElementById("mention").textContent = RESTO.piedDePage;
+
+/* Compteur de visites (service gratuit counterapi.dev, sans inscription) */
+if (RESTO.compteur) {
+  fetch("https://api.counterapi.dev/v1/" + RESTO.compteur + "/carte/up")
+    .then(r => r.json())
+    .then(d => {
+      const n = d.count ?? d.Count ?? d.value;
+      if (typeof n !== "number") return;
+      const el = document.getElementById("compteur");
+      el.innerHTML = "<b>" + n.toLocaleString("fr-FR") + "</b> visites";
+      el.hidden = false;
+    })
+    .catch(() => {});   // en cas de panne du service, la ligne reste simplement masquée
+}
 
 /* Installation sur l'écran d'accueil + consultation hors connexion */
 if ("serviceWorker" in navigator) {
