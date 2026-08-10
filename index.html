@@ -778,11 +778,19 @@ function memoire(valeur) {
 let patron = memoire();
 let visites = null;
 
-/* chemin = "hit/clé" (compter), "get/clé" (lire), "set/clé?value=N" (fixer) */
+/* chemin = "hit/clé" (compter), "get/clé" (lire), "set/clé?value=N" (fixer)
+   Retour : un nombre, ou "reseau" si l'appel n'a pas pu partir
+   (bloqueur de pub, CORS, coupure), ou null si le service a mal répondu. */
 async function appel(chemin) {
+  let r;
   try {
-    const r = await fetch(API + chemin);
-    if (!r.ok) return null;
+    r = await fetch(API + chemin);
+  } catch (err) {
+    return "reseau";
+  }
+  if (r.status === 404) return 0;        // la clé n'existe pas encore
+  if (!r.ok) return null;
+  try {
     const n = Number((await r.json()).value);   // l'API renvoie du texte
     return Number.isFinite(n) ? n : null;
   } catch (err) {
@@ -793,6 +801,8 @@ async function appel(chemin) {
 if (RESTO.compteur) {
   appel((patron ? "get/" : "hit/") + RESTO.compteur).then(n => { visites = n; });
 }
+
+function estNombre(v) { return typeof v === "number"; }
 
 function afficher(texte) {
   ligneCompteur.innerHTML = texte;
@@ -820,16 +830,17 @@ jeton.addEventListener("click", async () => {
 
   afficher("…");
 
-  if (visites === null) visites = await appel("get/" + RESTO.compteur);
+  if (!estNombre(visites)) visites = await appel("get/" + RESTO.compteur);
 
-  if (!patron && visites !== null) {          // on retire la visite qu'on vient de générer
+  if (!patron && estNombre(visites)) {        // on retire la visite qu'on vient de générer
     patron = true;
     memoire(true);
     const apres = await appel("set/" + RESTO.compteur + "?value=" + Math.max(0, visites - 1));
-    visites = apres !== null ? apres : Math.max(0, visites - 1);
+    visites = estNombre(apres) ? apres : Math.max(0, visites - 1);
   }
 
-  if (visites === null) { afficher("Compteur indisponible"); return; }
+  if (visites === "reseau") { afficher("Appel bloqué par le navigateur"); return; }
+  if (!estNombre(visites)) { afficher("Compteur indisponible"); return; }
   afficher("<b>" + visites.toLocaleString("fr-FR") + "</b>&nbsp;visites &nbsp;·&nbsp; hors la vôtre");
 });
 
