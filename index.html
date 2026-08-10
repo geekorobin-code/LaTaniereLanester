@@ -48,7 +48,7 @@ const RESTO = {
     "Ouvert tous les jours — 12h à 14h et 19h à 21h30",
     "Vendredi et samedi : service du soir jusqu'à 22h"
   ],
-  compteur:   "lataniere-lanester",   // identifiant du compteur de visites ("" pour le retirer)
+  compteur:   "lataniere_lanester_carte",   // clé du compteur de visites ("" pour le retirer)
   piedDePage: "Prix en euros, taxes et service compris. Liste des allergènes disponible sur demande auprès de votre serveur."
 };
 
@@ -490,9 +490,12 @@ body::before{
 .pied .infos a{color:var(--laiton);text-decoration:none;border-bottom:1px solid var(--trait)}
 .mention{font-size:.78rem;color:var(--fumee);max-width:26rem;margin:0 auto;line-height:1.6}
 .compteur{
-  margin-top:1.4rem;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  margin-top:1.4rem;padding:0 2.6rem;min-height:30px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
   color:rgba(163,143,120,.6)
 }
+.compteur[hidden]{display:none}
 .compteur b{color:var(--laiton);font-weight:500;font-variant-numeric:tabular-nums}
 .jeton{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 
@@ -749,59 +752,46 @@ document.getElementById("mention").textContent = RESTO.piedDePage;
 
 /* Compteur de visites.
    ------------------------------------------------------------------
+   Service : countapi.mileshilliard.com — gratuit, sans compte ni clé.
    La visite est enregistrée au chargement de la page.
    Le chiffre n'apparaît que si l'on appuie sur le petit ours en bas à gauche.
-   Ce premier appui annule aussi la visite en cours et mémorise l'appareil :
-   les visites suivantes depuis ce téléphone ou cet ordinateur ne seront
-   plus jamais comptées. Appui long d'une seconde pour refaire compter. */
+   Ce premier appui annule la visite en cours et mémorise l'appareil : les
+   visites suivantes depuis ce navigateur ne seront plus comptées du tout.
+   Appui long d'une seconde pour refaire compter cet appareil. */
 
 const jeton = document.getElementById("jeton");
 const ligneCompteur = document.getElementById("compteur");
 jeton.style.backgroundImage = "url('" + IMAGES.logo + "')";
 
 const CLE_PATRON = "taniere-patron";
+const API = "https://countapi.mileshilliard.com/api/v1/";
 
 function memoire(valeur) {
   try {
     if (valeur === undefined) return localStorage.getItem(CLE_PATRON) === "1";
     if (valeur) localStorage.setItem(CLE_PATRON, "1");
     else localStorage.removeItem(CLE_PATRON);
-  } catch (err) { /* stockage indisponible : on retombe sur la variable ci-dessous */ }
+  } catch (err) { /* stockage refusé : on garde la variable en mémoire */ }
   return false;
 }
 
 let patron = memoire();
 let visites = null;
 
-async function appel(sens) {   // sens = "up" (compter) ou "down" (annuler)
+/* chemin = "hit/clé" (compter), "get/clé" (lire), "set/clé?value=N" (fixer) */
+async function appel(chemin) {
   try {
-    const r = await fetch("https://api.counterapi.dev/v1/" + RESTO.compteur + "/carte/" + sens);
-    if (r.ok) {
-      const n = (await r.json()).count;
-      if (typeof n === "number") return n;
-    }
-  } catch (err) { /* on tente le service de secours */ }
-
-  if (sens === "up") {
-    try {
-      const r = await fetch("https://countapi.mileshilliard.com/api/v1/hit/" + RESTO.compteur + "/carte");
-      if (r.ok) {
-        const n = (await r.json()).value;
-        if (typeof n === "number") return n;
-      }
-    } catch (err) { /* les deux services sont muets */ }
+    const r = await fetch(API + chemin);
+    if (!r.ok) return null;
+    const n = Number((await r.json()).value);   // l'API renvoie du texte
+    return Number.isFinite(n) ? n : null;
+  } catch (err) {
+    return null;
   }
-  return null;
 }
 
 if (RESTO.compteur) {
-  appel("up").then(async n => {
-    visites = n;
-    if (patron && n !== null) {          // appareil connu : on retire aussitôt la visite
-      const apres = await appel("down");
-      visites = apres !== null ? apres : n - 1;
-    }
-  });
+  appel((patron ? "get/" : "hit/") + RESTO.compteur).then(n => { visites = n; });
 }
 
 function afficher(texte) {
@@ -816,31 +806,31 @@ jeton.addEventListener("pointerdown", () => {
     appuiLong = null;
     patron = false;
     memoire(false);
-    afficher("Cet appareil est de nouveau compté");
+    afficher("Appareil recompté");
   }, 1000);
 });
 
 ["pointerup", "pointerleave", "pointercancel"].forEach(ev =>
-  jeton.addEventListener(ev, () => { clearTimeout(appuiLong); })
+  jeton.addEventListener(ev, () => clearTimeout(appuiLong))
 );
 
 jeton.addEventListener("click", async () => {
   if (appuiLong === null) { appuiLong = 0; return; }   // l'appui long vient d'agir
-
   if (!ligneCompteur.hidden) { ligneCompteur.hidden = true; return; }
 
-  if (!patron) {                       // première fois : on annule la visite en cours
+  afficher("…");
+
+  if (visites === null) visites = await appel("get/" + RESTO.compteur);
+
+  if (!patron && visites !== null) {          // on retire la visite qu'on vient de générer
     patron = true;
     memoire(true);
-    const apres = await appel("down");
-    if (apres !== null) visites = apres;
-    else if (visites !== null) visites -= 1;
+    const apres = await appel("set/" + RESTO.compteur + "?value=" + Math.max(0, visites - 1));
+    visites = apres !== null ? apres : Math.max(0, visites - 1);
   }
 
-  if (visites === null) visites = await appel("up");
-  if (visites === null) { afficher("Compteur momentanément indisponible"); return; }
-
-  afficher("<b>" + visites.toLocaleString("fr-FR") + "</b> visites &nbsp;·&nbsp; la vôtre n'est pas comptée");
+  if (visites === null) { afficher("Compteur indisponible"); return; }
+  afficher("<b>" + visites.toLocaleString("fr-FR") + "</b>&nbsp;visites &nbsp;·&nbsp; hors la vôtre");
 });
 
 /* Installation sur l'écran d'accueil + consultation hors connexion */
