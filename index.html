@@ -377,8 +377,28 @@ body::before{
   border-top:1px solid rgba(217,164,65,.16);
   border-bottom:1px solid rgba(217,164,65,.16)
 }
-.nav ul{display:flex;gap:.35rem;list-style:none;overflow-x:auto;padding:.6rem 1.35rem;scrollbar-width:none}
+.nav ul{
+  display:flex;gap:.35rem;list-style:none;
+  overflow-x:auto;padding:.6rem 1.35rem;
+  scrollbar-width:none;scroll-behavior:smooth
+}
 .nav ul::-webkit-scrollbar{display:none}
+
+/* Dégradés aux extrémités : indiquent qu'il reste des sections à faire défiler */
+.nav::before,.nav::after{
+  content:"";position:absolute;top:0;bottom:0;width:2.8rem;
+  pointer-events:none;opacity:0;transition:opacity .25s;z-index:1
+}
+.nav::before{left:0;background:linear-gradient(to right,rgba(29,22,17,.96),transparent)}
+.nav::after{right:0;background:linear-gradient(to left,rgba(29,22,17,.96),transparent)}
+.nav.deborde-gauche::before{opacity:1}
+.nav.deborde-droite::after{opacity:1}
+
+/* Sur grand écran, tout tient sur deux lignes : plus rien à faire défiler */
+@media (min-width:760px){
+  .nav ul{flex-wrap:wrap;justify-content:center;overflow:visible}
+  .nav::before,.nav::after{display:none}
+}
 .nav a{
   display:block;white-space:nowrap;padding:.36rem .72rem;border-radius:999px;
   color:var(--fumee);text-decoration:none;font-size:.83rem;font-weight:500;
@@ -870,11 +890,36 @@ if ("serviceWorker" in navigator) {
 const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) x.target.classList.add("vue"); }), { rootMargin: "0px 0px -8% 0px" });
 document.querySelectorAll(".section").forEach(s => io.observe(s));
 
+/* Dégradés du menu selon la position du défilement */
+const barreNav = document.querySelector(".nav");
+function majDebordement() {
+  const reste = nav.scrollWidth - nav.clientWidth;
+  barreNav.classList.toggle("deborde-gauche", nav.scrollLeft > 4);
+  barreNav.classList.toggle("deborde-droite", reste > 4 && nav.scrollLeft < reste - 4);
+}
+nav.addEventListener("scroll", majDebordement, { passive: true });
+window.addEventListener("resize", majDebordement);
+majDebordement();
+
+/* La molette fait défiler le menu horizontalement */
+nav.addEventListener("wheel", ev => {
+  if (nav.scrollWidth <= nav.clientWidth) return;
+  if (Math.abs(ev.deltaY) <= Math.abs(ev.deltaX)) return;
+  ev.preventDefault();
+  nav.scrollLeft += ev.deltaY;
+}, { passive: false });
+
 const liens = [...nav.querySelectorAll("a")];
 const actif = new IntersectionObserver(es => {
   es.forEach(x => {
     if (!x.isIntersecting) return;
-    liens.forEach(a => a.setAttribute("aria-current", a.getAttribute("href") === "#" + x.target.id ? "true" : "false"));
+    liens.forEach(a => {
+      const actif = a.getAttribute("href") === "#" + x.target.id;
+      a.setAttribute("aria-current", actif ? "true" : "false");
+      if (actif && nav.scrollWidth > nav.clientWidth) {
+        a.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      }
+    });
   });
 }, { rootMargin: "-20% 0px -70% 0px" });
 document.querySelectorAll(".section").forEach(s => actif.observe(s));
