@@ -484,7 +484,7 @@ body::before{
 .choix-desc{display:block;font-family:var(--texte);font-size:.79rem;line-height:1.45;color:var(--sable);margin-top:.05rem}
 
 /* ─── Pied de page ─── */
-.pied{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--trait);text-align:center}
+.pied{position:relative;margin-top:4rem;padding-top:2rem;padding-bottom:.6rem;border-top:1px solid var(--trait);text-align:center}
 .pied .infos{margin-bottom:1.2rem}
 .pied .infos p{font-size:.92rem}
 .pied .infos a{color:var(--laiton);text-decoration:none;border-bottom:1px solid var(--trait)}
@@ -494,6 +494,15 @@ body::before{
   color:rgba(163,143,120,.6)
 }
 .compteur b{color:var(--laiton);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* Petit ours discret : un appui dessus révèle le nombre de visites */
+.jeton{
+  position:absolute;left:0;bottom:0;
+  width:30px;height:30px;padding:0;border:none;border-radius:50%;
+  background:#0B0906 center/cover no-repeat;
+  opacity:.3;cursor:pointer;transition:opacity .3s
+}
+.jeton:hover,.jeton:focus-visible{opacity:.75}
 
 a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 
@@ -552,6 +561,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
     <div class="infos" id="infos"></div>
     <p class="mention" id="mention"></p>
     <p class="compteur" id="compteur" hidden></p>
+    <button class="jeton" id="jeton" type="button" aria-label="La Tanière"></button>
   </footer>
 </div>
 
@@ -736,19 +746,45 @@ const infos = document.getElementById("infos");
 if (RESTO.telephone) infos.append(e("p", null, 'Réservations au <a href="tel:' + RESTO.telephone.replace(/\s/g, "") + '">' + RESTO.telephone + "</a>"));
 document.getElementById("mention").textContent = RESTO.piedDePage;
 
-/* Compteur de visites (service gratuit counterapi.dev, sans inscription) */
-if (RESTO.compteur) {
-  fetch("https://api.counterapi.dev/v1/" + RESTO.compteur + "/carte/up")
-    .then(r => r.json())
-    .then(d => {
-      const n = d.count ?? d.Count ?? d.value;
-      if (typeof n !== "number") return;
-      const el = document.getElementById("compteur");
-      el.innerHTML = "<b>" + n.toLocaleString("fr-FR") + "</b> visites";
-      el.hidden = false;
-    })
-    .catch(() => {});   // en cas de panne du service, la ligne reste simplement masquée
+/* Compteur de visites.
+   La visite est enregistrée au chargement, mais le chiffre n'est affiché
+   que si l'on appuie sur le petit ours en bas à gauche. */
+const jeton = document.getElementById("jeton");
+jeton.style.backgroundImage = "url('" + IMAGES.logo + "')";
+
+let visites = null;
+
+async function compter() {
+  const services = [
+    ["https://api.counterapi.dev/v1/" + RESTO.compteur + "/carte/up", d => d.count],
+    ["https://countapi.mileshilliard.com/api/v1/hit/" + RESTO.compteur + "/carte", d => d.value]
+  ];
+  for (const [url, lire] of services) {
+    try {
+      const rep = await fetch(url);
+      if (!rep.ok) continue;
+      const n = lire(await rep.json());
+      if (typeof n === "number") return n;
+    } catch (err) { /* on essaie le service suivant */ }
+  }
+  return null;
 }
+
+if (RESTO.compteur) {
+  compter().then(n => { visites = n; });
+}
+
+jeton.addEventListener("click", async () => {
+  const el = document.getElementById("compteur");
+  if (!el.hidden) { el.hidden = true; return; }
+  el.hidden = false;
+  if (visites === null) {
+    el.textContent = "Compteur momentanément indisponible";
+    visites = await compter();
+    if (visites === null) return;
+  }
+  el.innerHTML = "<b>" + visites.toLocaleString("fr-FR") + "</b> visites";
+});
 
 /* Installation sur l'écran d'accueil + consultation hors connexion */
 if ("serviceWorker" in navigator) {
