@@ -67,6 +67,14 @@ const RESTO = {
    Pour la retirer : mets  apres: ""  */
 const VIGNETTE = { apres: "entrees", legende: "Notre salle" };
 
+/* Petit mot invitant les clients à aimer les plats.
+   section : identifiant de la section où il s'affiche  ·  "" pour le retirer */
+const INVITATION = {
+  section: "entrees",
+  titre:   "Aimez vos plats préférés",
+  texte:   "Touchez le cœur à côté d'un plat qui vous a plu. Cela nous aide à connaître vos favoris."
+};
+
 /* Photos de plats disposées autour d'une section.
    cote : "gauche" ou "droite"  ·  haut : distance depuis le titre de section */
 const PHOTOS_PLATS = [
@@ -671,6 +679,68 @@ body::before{
 .plat.indispo .plat-nom,.plat.indispo .plat-prix{text-decoration:line-through;opacity:.42}
 .plat.indispo .plat-desc{opacity:.42}
 
+/* ─── Invitation à aimer ─── */
+.invitation{
+  display:flex;align-items:center;gap:.8rem;
+  margin:-.5rem 0 1.6rem;padding:.85rem 1rem;
+  background:rgba(192,71,62,.07);
+  border:1px solid rgba(192,71,62,.28);border-radius:999px
+}
+.invitation svg{
+  flex:none;width:22px;height:22px;
+  fill:#C0473E;stroke:#C0473E;stroke-width:1.5;stroke-linejoin:round
+}
+.invitation-titre{font-family:var(--titre);font-size:1rem;color:var(--os);line-height:1.2}
+.invitation-texte{font-size:.78rem;color:var(--fumee);line-height:1.45;margin-top:.15rem}
+@media (max-width:480px){
+  .invitation{border-radius:4px;padding:.8rem .9rem}
+}
+
+/* ─── Cœurs ─── */
+.coeur{
+  flex:none;margin-left:.35rem;padding:.35rem;
+  background:none;border:none;cursor:pointer;line-height:0;
+  opacity:.55;transition:opacity .2s,transform .2s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation
+}
+.coeur svg{width:19px;height:19px;fill:none;stroke:var(--fumee);stroke-width:1.8;stroke-linejoin:round}
+.coeur:hover{opacity:.9;transform:scale(1.12)}
+
+/* Sur écran tactile : pas de survol possible, donc plus visible et plus grand
+   pour rester facile à toucher. */
+@media (hover:none){
+  .coeur{opacity:.75;padding:.45rem;margin-left:.15rem}
+  .coeur svg{width:21px;height:21px;stroke:rgba(192,71,62,.85)}
+}
+.coeur[aria-pressed="true"]{opacity:1}
+.coeur[aria-pressed="true"] svg{fill:#C0473E;stroke:#C0473E}
+.coeur.bat{animation:bat .45s ease}
+@keyframes bat{0%{transform:scale(1)}35%{transform:scale(1.45)}70%{transform:scale(.92)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){ .coeur.bat{animation:none} }
+
+/* ─── Classement (panneau de l'ours) ─── */
+.classement{
+  margin:1.1rem auto 0;max-width:26rem;padding:1rem 1.1rem;
+  background:var(--terrier);border:1px solid rgba(217,164,65,.2);border-radius:4px;
+  text-align:left
+}
+.classement h3{
+  font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--laiton);font-weight:700;margin-bottom:.7rem;text-align:center
+}
+.classement ol{list-style:none;counter-reset:rang}
+.classement li{
+  counter-increment:rang;display:flex;align-items:baseline;gap:.55rem;
+  padding:.32rem 0;font-size:.85rem;color:var(--os)
+}
+.classement li::before{
+  content:counter(rang);flex:none;width:1.2rem;
+  font-variant-numeric:tabular-nums;color:var(--fumee);font-size:.75rem
+}
+.classement .nom{flex:1;min-width:0}
+.classement .score{flex:none;color:var(--laiton);font-variant-numeric:tabular-nums;font-weight:500}
+.classement .vide{font-size:.83rem;color:var(--fumee);text-align:center}
+
 /* ─── Sous-groupes ─── */
 .groupe{margin-top:2.1rem}
 .groupe:first-of-type{margin-top:.2rem}
@@ -746,7 +816,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 /* ─── Impression : bascule en version papier ─── */
 @media print{
   body{background:#fff;color:#111}
-  body::before,.barre,.vignette,.arbre,.scene,.resultat{display:none}
+  body::before,.barre,.vignette,.arbre,.scene,.resultat,.coeur,.classement,.invitation{display:none}
   .chapeau{padding:0 0 .8rem}
   .socle{padding:0 0 1rem}
   .enseigne{color:#111}
@@ -806,6 +876,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
     <div class="infos" id="infos"></div>
     <p class="mention" id="mention"></p>
     <p class="compteur" id="compteur" hidden></p>
+    <div class="classement" id="classement" hidden></div>
     <button class="jeton" id="jeton" type="button" aria-label="La Tanière"></button>
   </footer>
 </div>
@@ -870,6 +941,17 @@ function rendrePlat(p) {
   const ligne = e("div", "ligne");
   ligne.append(e("h3", "plat-nom", p.nom), e("span", "pointille"));
   if (p.prix) ligne.append(e("span", "plat-prix", p.prix + " €"));
+
+  const coeur = e("button", "coeur");
+  coeur.type = "button";
+  coeur.dataset.plat = p.nom;
+  coeur.title = "J'aime ce plat";
+  coeur.setAttribute("aria-label", "J'aime : " + p.nom);
+  coeur.setAttribute("aria-pressed", "false");
+  coeur.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+    '<path d="M12 20.5 4.2 12.9a4.6 4.6 0 0 1 0-6.6 4.8 4.8 0 0 1 6.7 0l1.1 1.1 1.1-1.1a4.8 4.8 0 0 1 6.7 0 4.6 4.6 0 0 1 0 6.6Z"/></svg>';
+  ligne.append(coeur);
+
   el.append(ligne);
 
   if (p.desc) el.append(e("p", "plat-desc", p.desc));
@@ -980,6 +1062,22 @@ if (ARBRE.section && IMAGES.arbre) {
     const a = e("img", "arbre");
     a.src = IMAGES.arbre; a.alt = ""; a.setAttribute("aria-hidden", "true");
     s.prepend(a);
+  }
+}
+
+/* Invitation à aimer les plats */
+if (INVITATION.section) {
+  const cible = document.getElementById(INVITATION.section);
+  if (cible) {
+    const mot = e("div", "invitation");
+    mot.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+      '<path d="M12 20.5 4.2 12.9a4.6 4.6 0 0 1 0-6.6 4.8 4.8 0 0 1 6.7 0l1.1 1.1 1.1-1.1a4.8 4.8 0 0 1 6.7 0 4.6 4.6 0 0 1 0 6.6Z"/></svg>';
+    const bloc = e("div");
+    bloc.append(e("p", "invitation-titre", INVITATION.titre),
+                e("p", "invitation-texte", INVITATION.texte));
+    mot.append(bloc);
+    cible.querySelector(".section-titre").after(mot);
   }
 }
 
@@ -1103,6 +1201,86 @@ function afficher(texte) {
   ligneCompteur.hidden = false;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   Cœurs : les clients aiment un plat, le patron voit le classement
+   ------------------------------------------------------------------
+   Un compteur par plat, sur le même service que le compteur de visites.
+   Les scores ne sont jamais montrés aux clients : ils n'apparaissent
+   que dans le panneau de l'ours.
+   ══════════════════════════════════════════════════════════════════ */
+const CLE_AIMES = "taniere-aimes";
+const panneau = document.getElementById("classement");
+
+function cleDuPlat(nom) {
+  return RESTO.compteur + "_j_" + normaliser(nom)
+    .replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 40);
+}
+
+function mesAimes() {
+  try { return new Set(JSON.parse(localStorage.getItem(CLE_AIMES) || "[]")); }
+  catch (err) { return new Set(); }
+}
+function noterAimes(ens) {
+  try { localStorage.setItem(CLE_AIMES, JSON.stringify([...ens])); } catch (err) {}
+}
+
+const aimes = mesAimes();
+
+document.querySelectorAll(".coeur").forEach(btn => {
+  const nom = btn.dataset.plat;
+  if (aimes.has(nom)) btn.setAttribute("aria-pressed", "true");
+
+  btn.addEventListener("click", async () => {
+    const deja = aimes.has(nom);
+    const cle = cleDuPlat(nom);
+
+    /* On bascule tout de suite : l'affichage ne doit pas attendre le réseau */
+    if (deja) { aimes.delete(nom); btn.setAttribute("aria-pressed", "false"); }
+    else {
+      aimes.add(nom);
+      btn.setAttribute("aria-pressed", "true");
+      btn.classList.remove("bat"); void btn.offsetWidth; btn.classList.add("bat");
+    }
+    noterAimes(aimes);
+
+    if (deja) {
+      const n = await appel("get/" + cle);
+      if (estNombre(n)) await appel("set/" + cle + "?value=" + Math.max(0, n - 1));
+    } else {
+      await appel("hit/" + cle);
+    }
+  });
+});
+
+/* Récupère tous les scores, par petits paquets pour ne pas saturer le service */
+async function classement() {
+  const noms = [...new Set([...document.querySelectorAll(".coeur")].map(b => b.dataset.plat))];
+  const scores = [];
+  for (let i = 0; i < noms.length; i += 6) {
+    const lot = noms.slice(i, i + 6);
+    const res = await Promise.all(lot.map(n => appel("get/" + cleDuPlat(n))));
+    lot.forEach((n, j) => { if (estNombre(res[j]) && res[j] > 0) scores.push([n, res[j]]); });
+  }
+  return scores.sort((a, b) => b[1] - a[1]);
+}
+
+function afficherClassement(scores) {
+  panneau.innerHTML = "";
+  panneau.append(e("h3", null, "Les plats préférés"));
+  if (!scores.length) {
+    panneau.append(e("p", "vide", "Aucun cœur pour le moment."));
+  } else {
+    const ol = e("ol");
+    scores.slice(0, 12).forEach(([nom, n]) => {
+      const li = e("li");
+      li.append(e("span", "nom", nom), e("span", "score", n + " ♥"));
+      ol.append(li);
+    });
+    panneau.append(ol);
+  }
+  panneau.hidden = false;
+}
+
 let appuiLong = null;
 
 jeton.addEventListener("pointerdown", () => {
@@ -1120,7 +1298,7 @@ jeton.addEventListener("pointerdown", () => {
 
 jeton.addEventListener("click", async () => {
   if (appuiLong === null) { appuiLong = 0; return; }   // l'appui long vient d'agir
-  if (!ligneCompteur.hidden) { ligneCompteur.hidden = true; return; }
+  if (!ligneCompteur.hidden) { ligneCompteur.hidden = true; panneau.hidden = true; return; }
 
   afficher("…");
 
@@ -1136,6 +1314,11 @@ jeton.addEventListener("click", async () => {
   if (visites === "reseau") { afficher("Appel bloqué par le navigateur"); return; }
   if (!estNombre(visites)) { afficher("Compteur indisponible"); return; }
   afficher("<b>" + visites.toLocaleString("fr-FR") + "</b>&nbsp;visites &nbsp;·&nbsp; hors la vôtre");
+
+  panneau.innerHTML = "";
+  panneau.append(e("h3", null, "Les plats préférés"), e("p", "vide", "Comptage en cours…"));
+  panneau.hidden = false;
+  afficherClassement(await classement());
 });
 
 /* Statistiques Cloudflare (chargées seulement si un jeton est renseigné) */
