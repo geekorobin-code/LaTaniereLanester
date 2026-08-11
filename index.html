@@ -41,7 +41,10 @@
 const RESTO = {
   nom:        "La Tanière",
   eyebrow:    "Restaurant",
-  maj:        "9 août 2026",          // date affichée sous le titre
+  /* Date affichée sous le titre.
+     "auto" → la date de ta dernière mise en ligne, calculée toute seule.
+     Tu peux aussi écrire une date à la main, ex : "9 août 2026". */
+  maj:        "auto",
   adresse:    "35 rue Antoine Lavoisier, 56600 Lanester",
   telephone:  "02 97 37 63 85",
   horaires:   [                        // une ligne par entrée
@@ -840,7 +843,23 @@ document.getElementById("logo").src = IMAGES.logo;
 document.getElementById("cliche").style.backgroundImage = "url('" + IMAGES.banniere + "')";
 document.getElementById("eyebrow").textContent = RESTO.eyebrow;
 document.getElementById("enseigne").textContent = RESTO.nom;
-document.getElementById("maj").textContent = "Carte du " + RESTO.maj;
+document.getElementById("maj").textContent = dateDeMaj();
+
+/* Date de mise à jour : celle du fichier lui-même, fournie par le serveur.
+   Si l'information manque (fichier ouvert en local, par exemple), on affiche
+   simplement « Carte à jour » plutôt qu'une date fausse. */
+function dateDeMaj() {
+  if (RESTO.maj && RESTO.maj !== "auto") return "Carte du " + RESTO.maj;
+
+  const d = new Date(document.lastModified);
+  if (isNaN(d)) return "Carte à jour";
+
+  /* Sans en-tête Last-Modified, le navigateur renvoie l'heure courante :
+     on l'écarte pour ne pas afficher la date du jour à tort. */
+  if (Math.abs(Date.now() - d.getTime()) < 60000) return "Carte à jour";
+
+  return "Carte du " + d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+}
 document.title = RESTO.nom + " — La carte";
 
 /* Un plat */
