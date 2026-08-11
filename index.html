@@ -369,14 +369,55 @@ body::before{
 .coordonnees a:hover{color:var(--laiton)}
 .coordonnees .heures{margin-top:.45rem;line-height:1.65;color:rgba(163,143,120,.78)}
 
-/* ─── Navigation ─── */
-.nav{
+/* ─── Barre d'outils collante ─── */
+.barre{
   position:sticky;top:0;z-index:20;margin:0 -1.35rem;
-  background:rgba(29,22,17,.94);
-  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  background:rgba(29,22,17,.95);
+  backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
   border-top:1px solid rgba(217,164,65,.16);
   border-bottom:1px solid rgba(217,164,65,.16)
 }
+
+.recherche{display:flex;align-items:center;gap:.5rem;padding:.65rem 1.35rem .1rem}
+.loupe{width:16px;height:16px;flex:none;fill:none;stroke:var(--fumee);stroke-width:1.8;stroke-linecap:round}
+.recherche input{
+  flex:1;min-width:0;background:none;border:none;outline:none;
+  font-family:var(--texte);font-size:.92rem;color:var(--os);padding:.35rem 0
+}
+.recherche input::placeholder{color:rgba(163,143,120,.7)}
+.recherche input::-webkit-search-cancel-button{display:none}
+.vider{
+  flex:none;width:22px;height:22px;padding:0;border:none;border-radius:50%;
+  background:rgba(163,143,120,.2);color:var(--os);font-size:1rem;line-height:1;cursor:pointer
+}
+.filtre-btn{
+  flex:none;display:flex;align-items:center;gap:.35rem;
+  padding:.3rem .65rem;border:1px solid rgba(217,164,65,.3);border-radius:999px;
+  background:none;color:var(--fumee);font-family:var(--texte);font-size:.76rem;cursor:pointer;
+  transition:color .2s,border-color .2s
+}
+.filtre-btn:hover,.filtre-btn[aria-expanded="true"]{color:var(--laiton);border-color:var(--laiton)}
+.pastille{
+  min-width:16px;height:16px;padding:0 4px;border-radius:999px;
+  background:var(--laiton);color:var(--ecorce);
+  font-size:.63rem;font-weight:700;line-height:16px;text-align:center
+}
+
+.filtres{display:flex;flex-wrap:wrap;gap:.4rem;padding:.15rem 1.35rem .7rem}
+.puce{
+  padding:.28rem .7rem;border:1px solid rgba(163,143,120,.35);border-radius:999px;
+  background:none;color:var(--fumee);font-family:var(--texte);font-size:.75rem;cursor:pointer;
+  transition:all .2s
+}
+.puce[aria-pressed="true"]{background:var(--laiton);border-color:var(--laiton);color:var(--ecorce);font-weight:500}
+
+.resultat{
+  padding:1.1rem 0 0;text-align:center;font-size:.8rem;color:var(--fumee)
+}
+.resultat b{color:var(--laiton);font-weight:500}
+
+/* ─── Navigation ─── */
+.nav{position:relative}
 .nav ul{
   display:flex;gap:.35rem;list-style:none;
   overflow-x:auto;padding:.6rem 1.35rem;
@@ -396,6 +437,7 @@ body::before{
 
 /* Sur grand écran, tout tient sur deux lignes : plus rien à faire défiler */
 @media (min-width:760px){
+  .section{scroll-margin-top:9.5rem}
   .nav ul{flex-wrap:wrap;justify-content:center;overflow:visible}
   .nav::before,.nav::after{display:none}
 }
@@ -408,7 +450,7 @@ body::before{
 .nav a[aria-current="true"]{color:var(--ecorce);background:var(--laiton)}
 
 /* ─── Sections ─── */
-.section{padding-top:3.1rem;scroll-margin-top:3.6rem}
+.section{padding-top:3.1rem;scroll-margin-top:7.4rem}
 .section-titre{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.7rem}
 .section-titre h2{
   font-family:var(--titre);font-style:italic;font-weight:300;
@@ -548,7 +590,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 /* ─── Impression : bascule en version papier ─── */
 @media print{
   body{background:#fff;color:#111}
-  body::before,.nav,.vignette,.arbre,.scene{display:none}
+  body::before,.barre,.vignette,.arbre,.scene,.resultat{display:none}
   .chapeau{padding:0 0 .8rem}
   .socle{padding:0 0 1rem}
   .enseigne{color:#111}
@@ -585,7 +627,24 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 
 <div class="enveloppe">
   <div class="coordonnees" id="coordonnees"></div>
-  <nav class="nav" aria-label="Sections de la carte"><ul id="nav"></ul></nav>
+
+  <div class="barre">
+    <div class="recherche">
+      <svg class="loupe" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/>
+      </svg>
+      <input id="recherche" type="search" placeholder="Rechercher un plat, un ingrédient…"
+             autocomplete="off" aria-label="Rechercher dans la carte">
+      <button class="vider" id="vider" type="button" aria-label="Effacer" hidden>&times;</button>
+      <button class="filtre-btn" id="filtre-btn" type="button" aria-expanded="false">
+        Filtres<span class="pastille" id="pastille" hidden></span>
+      </button>
+    </div>
+    <nav class="nav" aria-label="Sections de la carte"><ul id="nav"></ul></nav>
+    <div class="filtres" id="filtres" hidden></div>
+  </div>
+
+  <p class="resultat" id="resultat" hidden></p>
   <main id="carte"></main>
   <footer class="pied">
     <div class="infos" id="infos"></div>
@@ -610,6 +669,9 @@ const IMAGES = {
 </script>
 
 <script>
+const normaliser = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 const e = (t, c, h) => { const n = document.createElement(t); if (c) n.className = c; if (h != null) n.innerHTML = h; return n; };
 
 /* En-tête */
@@ -631,6 +693,7 @@ function rendrePlat(p) {
   el.append(ligne);
 
   if (p.desc) el.append(e("p", "plat-desc", p.desc));
+  el.dataset.texte = normaliser([p.nom, p.desc, (p.tags || []).join(" ")].join(" "));
 
   const tags = (p.tags || []).slice();
   if (!dispo) tags.push("épuisé");
@@ -695,8 +758,10 @@ function rendreFormule(f) {
     bloc.append(e("h3", null, b.titre));
     const ul = e("ul");
     b.choix.forEach(c => {
-      const li = e("li", null, typeof c === "string" ? c : c.nom);
+      const nom = typeof c === "string" ? c : c.nom;
+      const li = e("li", null, nom);
       if (c.desc) li.append(e("span", "choix-desc", c.desc));
+      li.dataset.texte = normaliser(nom + " " + (c.desc || ""));
       ul.append(li);
     });
     bloc.append(ul);
@@ -889,6 +954,107 @@ if ("serviceWorker" in navigator) {
 /* Apparition + surlignage de la section courante */
 const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) x.target.classList.add("vue"); }), { rootMargin: "0px 0px -8% 0px" });
 document.querySelectorAll(".section").forEach(s => io.observe(s));
+
+/* ══════════════════════════════════════════════════════════════════
+   Recherche instantanée et filtres
+   ══════════════════════════════════════════════════════════════════ */
+const champ = document.getElementById("recherche");
+const boutonVider = document.getElementById("vider");
+const boutonFiltre = document.getElementById("filtre-btn");
+const zoneFiltres = document.getElementById("filtres");
+const pastille = document.getElementById("pastille");
+const ligneResultat = document.getElementById("resultat");
+
+/* Les puces sont construites à partir des étiquettes réellement présentes */
+const etiquettes = [...new Set(
+  CARTE.flatMap(s => [...(s.plats || []), ...(s.groupes || []).flatMap(g => g.plats)])
+       .flatMap(p => p.tags || [])
+)];
+
+const actives = new Set();
+
+etiquettes.forEach(t => {
+  const b = e("button", "puce", t === "suggestion" ? "suggestion du chef" : t);
+  b.type = "button";
+  b.setAttribute("aria-pressed", "false");
+  b.addEventListener("click", () => {
+    if (actives.has(t)) actives.delete(t); else actives.add(t);
+    b.setAttribute("aria-pressed", actives.has(t) ? "true" : "false");
+    filtrer();
+  });
+  zoneFiltres.append(b);
+});
+if (!etiquettes.length) boutonFiltre.hidden = true;
+
+boutonFiltre.addEventListener("click", () => {
+  const ouvert = zoneFiltres.hidden;
+  zoneFiltres.hidden = !ouvert;
+  boutonFiltre.setAttribute("aria-expanded", ouvert ? "true" : "false");
+});
+
+champ.addEventListener("input", filtrer);
+boutonVider.addEventListener("click", () => { champ.value = ""; champ.focus(); filtrer(); });
+
+function filtrer() {
+  const q = normaliser(champ.value.trim());
+  const actif = q.length > 0 || actives.size > 0;
+
+  boutonVider.hidden = !champ.value;
+  pastille.hidden = actives.size === 0;
+  pastille.textContent = actives.size;
+
+  document.querySelectorAll(".vignette, .arbre").forEach(el => { el.style.display = actif ? "none" : ""; });
+
+  let total = 0;
+
+  document.querySelectorAll(".section").forEach(sec => {
+    let visibles = 0;
+
+    sec.querySelectorAll(".plat").forEach(el => {
+      const texteOk = !q || el.dataset.texte.includes(q);
+      const tagsOk = !actives.size || [...actives].every(t => el.dataset.texte.includes(normaliser(t)));
+      const ok = texteOk && tagsOk;
+      el.style.display = ok ? "" : "none";
+      if (ok) visibles++;
+    });
+
+    /* Dans les menus, on filtre ligne par ligne. Les étiquettes ne s'y appliquent pas. */
+    const lignes = sec.querySelectorAll(".bloc li");
+    if (lignes.length) {
+      let gardees = 0;
+      lignes.forEach(li => {
+        const ok = !actives.size && (!q || li.dataset.texte.includes(q));
+        li.style.display = ok ? "" : "none";
+        if (ok) gardees++;
+      });
+      sec.querySelectorAll(".bloc").forEach(b => {
+        const reste = [...b.querySelectorAll("li")].some(li => li.style.display !== "none");
+        b.style.display = reste ? "" : "none";
+      });
+      const formule = sec.querySelector(".formule");
+      if (formule) formule.style.display = gardees ? "" : "none";
+      visibles += gardees;
+    }
+
+    /* Un sous-groupe entièrement masqué disparaît avec son titre */
+    sec.querySelectorAll(".groupe").forEach(g => {
+      const reste = [...g.querySelectorAll(".plat")].some(el => el.style.display !== "none");
+      g.style.display = reste ? "" : "none";
+    });
+
+    sec.style.display = (!actif || visibles) ? "" : "none";
+    total += visibles;
+
+    const lien = document.querySelector('.nav a[href="#' + sec.id + '"]');
+    if (lien) lien.parentElement.style.display = sec.style.display === "none" ? "none" : "";
+  });
+
+  if (!actif) { ligneResultat.hidden = true; return; }
+  ligneResultat.hidden = false;
+  ligneResultat.innerHTML = total
+    ? "<b>" + total + "</b> résultat" + (total > 1 ? "s" : "")
+    : "Aucun plat ne correspond. Essayez un autre mot.";
+}
 
 /* Dégradés du menu selon la position du défilement */
 const barreNav = document.querySelector(".nav");
