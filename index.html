@@ -74,10 +74,14 @@ const VIGNETTE = { apres: "entrees", legende: "Notre salle" };
    l'heure indiquée. Pour ne rien annoncer : plat: ""
    ══════════════════════════════════════════════════════════════════ */
 const PLAT_DU_JOUR = {
-  plat:    "Poulet à la mexicaine",
-  detail:  "Servi avec son riz",   // facultatif, ex : "Riz, poivrons, haricots rouges"
+  /* Le jour où tu annonces un plat, remplis "plat" et "date".
+     Sans date, l'annonce reste visible tous les jours jusqu'à l'heure limite. */
+  date:    "",              // ex : "2026-08-13" (année-mois-jour)
+  plat:    "",
+  detail:  "",              // facultatif, ex : "Servi avec son riz"
   prix:    "",              // facultatif, ex : "15,90"
   jusqua:  14,              // heure de disparition (14 = 14h00)
+  jusquaMinute: 0,          // minute de disparition (ex : 30 pour 14h30)
   mention: "Servi ce midi"
 };
 
@@ -1120,14 +1124,33 @@ if (ARBRE.section && IMAGES.arbre) {
 
   const boite = document.getElementById("ardoise");
 
-  function verifier() {
-    const maintenant = new Date();
-    /* On raisonne à l'heure de Paris, quel que soit le réglage du téléphone */
-    const heure = Number(new Intl.DateTimeFormat("fr-FR", {
-      timeZone: "Europe/Paris", hour: "numeric", hour12: false
-    }).format(maintenant));
+  /* Heure et minute à Paris, quel que soit le réglage du téléphone.
+     On lit les morceaux un par un : selon les navigateurs, le texte formaté
+     peut contenir des unités ("14 h") qui fausseraient une simple conversion. */
+  function heureParis() {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+    }).formatToParts(new Date());
+    const lire = t => Number((parts.find(p => p.type === t) || {}).value);
+    return { h: lire("hour"), m: lire("minute") };
+  }
 
-    boite.hidden = heure >= PLAT_DU_JOUR.jusqua;
+  function verifier() {
+    const { h, m } = heureParis();
+    if (!Number.isFinite(h)) { boite.hidden = false; return; }
+    const limite = PLAT_DU_JOUR.jusqua * 60 + (PLAT_DU_JOUR.jusquaMinute || 0);
+    const passe = (h * 60 + m) >= limite;
+
+    /* Si une date est indiquée, l'annonce ne s'affiche que ce jour-là */
+    let bonJour = true;
+    if (PLAT_DU_JOUR.date) {
+      const jour = new Intl.DateTimeFormat("fr-CA", {
+        timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit"
+      }).format(new Date());
+      bonJour = jour === PLAT_DU_JOUR.date;
+    }
+
+    boite.hidden = passe || !bonJour;
   }
 
   boite.innerHTML = "";
