@@ -67,6 +67,9 @@ const RESTO = {
    Pour la retirer : mets  apres: ""  */
 const VIGNETTE = { apres: "entrees", legende: "Notre salle" };
 
+/* Bandeau rouge en haut de la carte. Mets  texte: ""  pour le retirer. */
+const ANNONCE = { texte: "Salle climatisée · Terrasse ouverte" };
+
 /* ══════════════════════════════════════════════════════════════════
    LE PLAT DU JOUR
    ------------------------------------------------------------------
@@ -697,6 +700,17 @@ body::before{
 .plat.indispo .plat-nom,.plat.indispo .plat-prix{text-decoration:line-through;opacity:.42}
 .plat.indispo .plat-desc{opacity:.42}
 
+/* ─── Bandeau d'annonce ─── */
+.annonce{
+  margin:1.8rem 0 -.6rem;padding:.7rem 1rem;
+  text-align:center;border-radius:4px;
+  background:linear-gradient(135deg,#8E2C25,#B4392F);
+  color:#FFF1E4;font-size:.86rem;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;line-height:1.4;
+  box-shadow:0 4px 18px rgba(180,57,47,.3)
+}
+.annonce[hidden]{display:none}
+
 /* ─── Plat du jour ─── */
 .ardoise{
   position:relative;margin:2.4rem 0 -.6rem;padding:1.5rem 1.4rem 1.35rem;
@@ -867,7 +881,8 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 @media print{
   body{background:#fff;color:#111}
   body::before,.barre,.vignette,.arbre,.scene,.resultat,.coeur,.classement,.invitation{display:none}
-  .ardoise{break-inside:avoid}
+  .ardoise,.annonce{break-inside:avoid}
+  .annonce{background:none;color:#B4392F;box-shadow:none}
   .chapeau{padding:0 0 .8rem}
   .socle{padding:0 0 1rem}
   .enseigne{color:#111}
@@ -921,6 +936,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
     <div class="filtres" id="filtres" hidden></div>
   </div>
 
+  <p class="annonce" id="annonce" hidden></p>
   <div class="ardoise" id="ardoise" hidden></div>
 
   <p class="resultat" id="resultat" hidden></p>
@@ -1116,6 +1132,13 @@ if (ARBRE.section && IMAGES.arbre) {
     a.src = IMAGES.arbre; a.alt = ""; a.setAttribute("aria-hidden", "true");
     s.prepend(a);
   }
+}
+
+/* Bandeau d'annonce */
+if (ANNONCE.texte) {
+  const a = document.getElementById("annonce");
+  a.textContent = ANNONCE.texte;
+  a.hidden = false;
 }
 
 /* Plat du jour : affiché jusqu'à l'heure indiquée, puis masqué de lui-même */
