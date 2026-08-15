@@ -67,6 +67,16 @@ const RESTO = {
    Pour la retirer : mets  apres: ""  */
 const VIGNETTE = { apres: "entrees", legende: "Notre salle" };
 
+/* Encadré libre, au même endroit que le plat du jour.
+   S'affiche uniquement à la date indiquée si tu en mets une.
+   Mets  titre: ""  pour le retirer. */
+const ENCADRE = {
+  date:    "2026-08-15",    // "" pour l'afficher tous les jours
+  titre:   "Ouvert aujourd'hui",
+  texte:   "15 août",
+  detail:  "Midi et soir, comme chaque jour"
+};
+
 /* Bandeau rouge en haut de la carte. Mets  texte: ""  pour le retirer. */
 const ANNONCE = { texte: "Salle climatisée · Terrasse ouverte" };
 
@@ -79,8 +89,8 @@ const ANNONCE = { texte: "Salle climatisée · Terrasse ouverte" };
 const PLAT_DU_JOUR = {
   /* Le jour où tu annonces un plat, remplis "plat" et "date".
      Sans date, l'annonce reste visible tous les jours jusqu'à l'heure limite. */
-  date:    "2026-08-14",    // ex : "2026-08-13" (année-mois-jour)
-  plat:    "Travers de porc",
+  date:    "",              // ex : "2026-08-13" (année-mois-jour)
+  plat:    "",
   detail:  "",              // facultatif, ex : "Servi avec son riz"
   prix:    "",              // facultatif, ex : "15,90"
   jusqua:  14,              // heure de disparition (14 = 14h00)
@@ -938,6 +948,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
 
   <p class="annonce" id="annonce" hidden></p>
   <div class="ardoise" id="ardoise" hidden></div>
+  <div class="ardoise" id="encadre" hidden></div>
 
   <p class="resultat" id="resultat" hidden></p>
   <main id="carte"></main>
@@ -1140,6 +1151,24 @@ if (ANNONCE.texte) {
   a.textContent = ANNONCE.texte;
   a.hidden = false;
 }
+
+/* Encadré libre */
+(function encadre() {
+  if (!ENCADRE.titre && !ENCADRE.texte) return;
+
+  const boite = document.getElementById("encadre");
+  if (ENCADRE.date) {
+    const jour = new Intl.DateTimeFormat("fr-CA", {
+      timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit"
+    }).format(new Date());
+    if (jour !== ENCADRE.date) return;
+  }
+
+  if (ENCADRE.titre)  boite.append(e("p", "ardoise-titre", ENCADRE.titre));
+  if (ENCADRE.texte)  boite.append(e("p", "ardoise-plat", ENCADRE.texte));
+  if (ENCADRE.detail) boite.append(e("p", "ardoise-detail", ENCADRE.detail));
+  boite.hidden = false;
+})();
 
 /* Plat du jour : affiché jusqu'à l'heure indiquée, puis masqué de lui-même */
 (function platDuJour() {
