@@ -71,10 +71,10 @@ const VIGNETTE = { apres: "entrees", legende: "Notre salle" };
    S'affiche uniquement à la date indiquée si tu en mets une.
    Mets  titre: ""  pour le retirer. */
 const ENCADRE = {
-  date:    "2026-08-15",    // "" pour l'afficher tous les jours
-  titre:   "Ouvert aujourd'hui",
-  texte:   "15 août",
-  detail:  "Midi et soir, comme chaque jour"
+  date:    "",              // "" pour l'afficher tous les jours
+  titre:   "",
+  texte:   "",
+  detail:  ""
 };
 
 /* Bandeau rouge en haut de la carte. Mets  texte: ""  pour le retirer. */
@@ -89,9 +89,9 @@ const ANNONCE = { texte: "Salle climatisée · Terrasse ouverte" };
 const PLAT_DU_JOUR = {
   /* Le jour où tu annonces un plat, remplis "plat" et "date".
      Sans date, l'annonce reste visible tous les jours jusqu'à l'heure limite. */
-  date:    "",              // ex : "2026-08-13" (année-mois-jour)
-  plat:    "",
-  detail:  "",              // facultatif, ex : "Servi avec son riz"
+  date:    "2026-08-17",    // "" pour l'afficher chaque jour jusqu'à l'heure limite
+  plat:    "Duo de saucisses (chorizo)",
+  detail:  "Servi avec sa purée",  // facultatif, ex : "Servi avec son riz"
   prix:    "",              // facultatif, ex : "15,90"
   jusqua:  14,              // heure de disparition (14 = 14h00)
   jusquaMinute: 0,          // minute de disparition (ex : 30 pour 14h30)
