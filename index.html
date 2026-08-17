@@ -71,10 +71,11 @@ const VIGNETTE = { apres: "entrees", legende: "Notre salle" };
    S'affiche uniquement à la date indiquée si tu en mets une.
    Mets  titre: ""  pour le retirer. */
 const ENCADRE = {
-  date:    "",              // "" pour l'afficher tous les jours
-  titre:   "",
-  texte:   "",
-  detail:  ""
+  date:    "2026-08-17",    // "" pour l'afficher tous les jours
+  titre:   "Rupture de stock",
+  texte:   "Plus de steak haché",
+  detail:  "Le burger classique et le haché frites du menu enfant ne sont pas disponibles aujourd'hui. Toutes nos excuses.",
+  alerte:  true             // encadré rouge au lieu du doré
 };
 
 /* Bandeau rouge en haut de la carte. Mets  texte: ""  pour le retirer. */
@@ -176,7 +177,7 @@ const CARTE = [
   },
 
   { id: "burgers", titre: "Burgers & haché", plats: [
-    { nom: "Le Classique",     desc: "Cheddar, crispy bacon, bœuf haché, sauce tanière, salade", prix: "16,50" },
+    { nom: "Le Classique",     desc: "Cheddar, crispy bacon, bœuf haché, sauce tanière, salade", prix: "16,50", dispo: false },
     { nom: "Le Burger poulet", desc: "Poulet croustillant, sauce burger, bacon, cheddar", prix: "16,50" },
     { nom: "Le Végé",          desc: "Tatin de légumes, burrata, salade, confit d'oignons", prix: "16,90", tags: ["végé"] }
   ]},
@@ -308,7 +309,7 @@ const FORMULES = [
     ],
     listes: [
       { titre: "Entrées au choix",  choix: ["Salade de chèvre chaud", "Œuf cocotte chorizo Saint-Marcellin", "Tomate burrata", "Salade César", "Carpaccio parmesan"] },
-      { titre: "Plats au choix",    choix: ["Plat du jour", "Fish & chips", "Pièce du boucher en brochette", "Brochette de poulet au curry", "Tartare préparé par nos soins", "Andouillette grillée", "Burger classique"] },
+      { titre: "Plats au choix",    choix: ["Plat du jour", "Fish & chips", "Pièce du boucher en brochette", "Brochette de poulet au curry", "Tartare préparé par nos soins", "Andouillette grillée", "Burger classique (indisponible)"] },
       { titre: "Desserts au choix", choix: ["Panna cotta fruits rouges", "Crème brûlée", "Cheesecake caramel", { nom: "Farandole des desserts", desc: "Mini crème brûlée, mini panna cotta, glace vanille, mini muffins" }, { nom: "2 boules de glace au choix", desc: "Chocolat, vanille, fraise, caramel beurre salé, noix de coco, noix, nougat, pistache, cassis, citron vert, passion, café" }] }
     ]
   },
@@ -317,7 +318,7 @@ const FORMULES = [
     condition: "Jusqu'à 10 ans",
     tarifs: [ { label: "Plat + dessert + boisson", prix: "12,50" } ],
     listes: [
-      { titre: "Plat au choix",    choix: ["Haché frites", "Poulet croustillant frites"] },
+      { titre: "Plat au choix",    choix: [{ nom: "Haché frites", desc: "Momentanément indisponible" }, "Poulet croustillant frites"] },
       { titre: "Dessert au choix", choix: [
         "Brownie",
         { nom: "Sundae vanille", desc: "Coulis caramel, fruits rouges ou chocolat, noix de pécan" },
@@ -746,6 +747,17 @@ body::before{
   font-size:clamp(1.75rem,7.5vw,2.5rem);line-height:1.1;color:var(--os)
 }
 .ardoise-detail{margin-top:.5rem;font-size:.87rem;color:var(--sable)}
+
+/* Variante rouge, pour une rupture ou une fermeture */
+.ardoise.alerte{
+  background:radial-gradient(120% 140% at 50% 0%,rgba(192,71,62,.2),transparent 65%),var(--terrier);
+  border-color:rgba(192,71,62,.55)
+}
+.ardoise.alerte::before,.ardoise.alerte::after{
+  background:linear-gradient(transparent,rgba(192,71,62,.5),transparent)
+}
+.ardoise.alerte .ardoise-titre{color:#D9635A}
+.ardoise.alerte .ardoise-detail{color:var(--fumee)}
 .ardoise-bas{
   margin-top:.85rem;font-size:.73rem;letter-spacing:.13em;text-transform:uppercase;
   color:var(--fumee)
@@ -1164,6 +1176,7 @@ if (ANNONCE.texte) {
     if (jour !== ENCADRE.date) return;
   }
 
+  if (ENCADRE.alerte) boite.classList.add("alerte");
   if (ENCADRE.titre)  boite.append(e("p", "ardoise-titre", ENCADRE.titre));
   if (ENCADRE.texte)  boite.append(e("p", "ardoise-plat", ENCADRE.texte));
   if (ENCADRE.detail) boite.append(e("p", "ardoise-detail", ENCADRE.detail));
