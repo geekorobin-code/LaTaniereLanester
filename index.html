@@ -71,11 +71,11 @@ const VIGNETTE = { apres: "entrees", legende: "Notre salle" };
    S'affiche uniquement à la date indiquée si tu en mets une.
    Mets  titre: ""  pour le retirer. */
 const ENCADRE = {
-  date:    "2026-08-17",    // "" pour l'afficher tous les jours
-  titre:   "Rupture de stock",
-  texte:   "Plus de steak haché",
-  detail:  "Le burger classique et le haché frites du menu enfant ne sont pas disponibles aujourd'hui. Toutes nos excuses.",
-  alerte:  true             // encadré rouge au lieu du doré
+  date:    "",              // "" pour l'afficher tous les jours
+  titre:   "",
+  texte:   "",
+  detail:  "",
+  alerte:  false            // true → encadré rouge, pour une rupture ou une fermeture
 };
 
 /* Bandeau rouge en haut de la carte. Mets  texte: ""  pour le retirer. */
@@ -90,9 +90,9 @@ const ANNONCE = { texte: "Salle climatisée · Terrasse ouverte" };
 const PLAT_DU_JOUR = {
   /* Le jour où tu annonces un plat, remplis "plat" et "date".
      Sans date, l'annonce reste visible tous les jours jusqu'à l'heure limite. */
-  date:    "2026-08-17",    // "" pour l'afficher chaque jour jusqu'à l'heure limite
-  plat:    "Duo de saucisses (chorizo)",
-  detail:  "Servi avec sa purée",  // facultatif, ex : "Servi avec son riz"
+  date:    "2026-08-18",    // "" pour l'afficher chaque jour jusqu'à l'heure limite
+  plat:    "Côte de porc, sauce normande",
+  detail:  "",              // facultatif, ex : "Servi avec son riz"
   prix:    "",              // facultatif, ex : "15,90"
   jusqua:  14,              // heure de disparition (14 = 14h00)
   jusquaMinute: 0,          // minute de disparition (ex : 30 pour 14h30)
@@ -177,7 +177,7 @@ const CARTE = [
   },
 
   { id: "burgers", titre: "Burgers & haché", plats: [
-    { nom: "Le Classique",     desc: "Cheddar, crispy bacon, bœuf haché, sauce tanière, salade", prix: "16,50", dispo: false },
+    { nom: "Le Classique",     desc: "Cheddar, crispy bacon, bœuf haché, sauce tanière, salade", prix: "16,50" },
     { nom: "Le Burger poulet", desc: "Poulet croustillant, sauce burger, bacon, cheddar", prix: "16,50" },
     { nom: "Le Végé",          desc: "Tatin de légumes, burrata, salade, confit d'oignons", prix: "16,90", tags: ["végé"] }
   ]},
@@ -309,7 +309,7 @@ const FORMULES = [
     ],
     listes: [
       { titre: "Entrées au choix",  choix: ["Salade de chèvre chaud", "Œuf cocotte chorizo Saint-Marcellin", "Tomate burrata", "Salade César", "Carpaccio parmesan"] },
-      { titre: "Plats au choix",    choix: ["Plat du jour", "Fish & chips", "Pièce du boucher en brochette", "Brochette de poulet au curry", "Tartare préparé par nos soins", "Andouillette grillée", "Burger classique (indisponible)"] },
+      { titre: "Plats au choix",    choix: ["Plat du jour", "Fish & chips", "Pièce du boucher en brochette", "Brochette de poulet au curry", "Tartare préparé par nos soins", "Andouillette grillée", "Burger classique"] },
       { titre: "Desserts au choix", choix: ["Panna cotta fruits rouges", "Crème brûlée", "Cheesecake caramel", { nom: "Farandole des desserts", desc: "Mini crème brûlée, mini panna cotta, glace vanille, mini muffins" }, { nom: "2 boules de glace au choix", desc: "Chocolat, vanille, fraise, caramel beurre salé, noix de coco, noix, nougat, pistache, cassis, citron vert, passion, café" }] }
     ]
   },
@@ -318,7 +318,7 @@ const FORMULES = [
     condition: "Jusqu'à 10 ans",
     tarifs: [ { label: "Plat + dessert + boisson", prix: "12,50" } ],
     listes: [
-      { titre: "Plat au choix",    choix: [{ nom: "Haché frites", desc: "Momentanément indisponible" }, "Poulet croustillant frites"] },
+      { titre: "Plat au choix",    choix: ["Haché frites", "Poulet croustillant frites"] },
       { titre: "Dessert au choix", choix: [
         "Brownie",
         { nom: "Sundae vanille", desc: "Coulis caramel, fruits rouges ou chocolat, noix de pécan" },
