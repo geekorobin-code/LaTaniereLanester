@@ -1340,7 +1340,17 @@ function memoire(valeur) {
 }
 
 let patron = memoire();
-let visites = null;
+let visites = null;      // total depuis la mise en ligne
+let visitesJour = null;  // uniquement la journée en cours
+
+/* Clé du jour, ex : "..._d_20260819". Chaque journée a son propre compteur. */
+function cleDuJour() {
+  const p = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(new Date());
+  const v = t => (p.find(x => x.type === t) || {}).value;
+  return RESTO.compteur + "_d_" + v("year") + v("month") + v("day");
+}
 
 /* chemin = "hit/clé" (compter), "get/clé" (lire), "set/clé?value=N" (fixer)
    Retour : un nombre, ou "reseau" si l'appel n'a pas pu partir
@@ -1363,7 +1373,9 @@ async function appel(chemin) {
 }
 
 if (RESTO.compteur) {
-  appel((patron ? "get/" : "hit/") + RESTO.compteur).then(n => { visites = n; });
+  const verbe = patron ? "get/" : "hit/";
+  appel(verbe + RESTO.compteur).then(n => { visites = n; });
+  appel(verbe + cleDuJour()).then(n => { visitesJour = n; });
 }
 
 function estNombre(v) { return typeof v === "number"; }
@@ -1474,18 +1486,30 @@ jeton.addEventListener("click", async () => {
 
   afficher("…");
 
-  if (!estNombre(visites)) visites = await appel("get/" + RESTO.compteur);
+  if (!estNombre(visites))     visites     = await appel("get/" + RESTO.compteur);
+  if (!estNombre(visitesJour)) visitesJour = await appel("get/" + cleDuJour());
 
   if (!patron && estNombre(visites)) {        // on retire la visite qu'on vient de générer
     patron = true;
     memoire(true);
-    const apres = await appel("set/" + RESTO.compteur + "?value=" + Math.max(0, visites - 1));
-    visites = estNombre(apres) ? apres : Math.max(0, visites - 1);
+
+    const cible = Math.max(0, visites - 1);
+    const apres = await appel("set/" + RESTO.compteur + "?value=" + cible);
+    visites = estNombre(apres) ? apres : cible;
+
+    if (estNombre(visitesJour)) {
+      const cibleJour = Math.max(0, visitesJour - 1);
+      const apresJour = await appel("set/" + cleDuJour() + "?value=" + cibleJour);
+      visitesJour = estNombre(apresJour) ? apresJour : cibleJour;
+    }
   }
 
   if (visites === "reseau") { afficher("Appel bloqué par le navigateur"); return; }
   if (!estNombre(visites)) { afficher("Compteur indisponible"); return; }
-  afficher("<b>" + visites.toLocaleString("fr-FR") + "</b>&nbsp;visites &nbsp;·&nbsp; hors la vôtre");
+  const jour = estNombre(visitesJour)
+    ? " &nbsp;·&nbsp; <b>" + visitesJour.toLocaleString("fr-FR") + "</b>&nbsp;aujourd'hui"
+    : "";
+  afficher("<b>" + visites.toLocaleString("fr-FR") + "</b>&nbsp;au total" + jour);
 
   panneau.innerHTML = "";
   panneau.append(e("h3", null, "Les plats préférés"), e("p", "vide", "Comptage en cours…"));
