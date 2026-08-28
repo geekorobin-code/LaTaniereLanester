@@ -90,9 +90,9 @@ const ANNONCE = { texte: "Salle climatisée" };
 const PLAT_DU_JOUR = {
   /* Le jour où tu annonces un plat, remplis "plat" et "date".
      Sans date, l'annonce reste visible tous les jours jusqu'à l'heure limite. */
-  date:    "2026-08-26",    // "" pour l'afficher chaque jour jusqu'à l'heure limite
-  plat:    "Thon au sésame",
-  detail:  "Sauce yakitori, avec son riz ratatouille",
+  date:    "2026-08-28",    // "" pour l'afficher chaque jour jusqu'à l'heure limite
+  plat:    "Travers de porc",
+  detail:  "Frites et sauce barbecue",
   prix:    "",              // facultatif, ex : "15,90"
   jusqua:  14,              // heure de disparition (14 = 14h00)
   jusquaMinute: 0,          // minute de disparition (ex : 30 pour 14h30)
@@ -738,18 +738,6 @@ body::before{
 }
 .ardoise::before{left:.5rem}
 .ardoise::after{right:.5rem}
-.ardoise-medailon{
-  width:92px;height:92px;margin:-3.15rem auto .9rem;
-  display:flex;align-items:center;justify-content:center;
-  padding:1rem;text-align:center;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 28%,rgba(239,228,210,.12),transparent 42%),var(--ecorce);
-  border:1px solid rgba(217,164,65,.65);
-  box-shadow:0 5px 18px rgba(0,0,0,.45),inset 0 0 0 4px rgba(217,164,65,.08);
-  color:var(--laiton);
-  font-size:.55rem;letter-spacing:.16em;line-height:1.25;text-transform:uppercase;font-weight:700;
-}
-.ardoise-medailon::before{content:"✦";display:block;font-size:.8rem;margin-bottom:.18rem;}
 .ardoise-titre{
   font-size:.64rem;letter-spacing:.32em;text-transform:uppercase;
   color:var(--laiton);font-weight:700;margin-bottom:.55rem
@@ -1231,11 +1219,9 @@ if (ANNONCE.texte) {
   }
 
   boite.innerHTML = "";
-  const medaillon = e("div", "ardoise-medailon");
-  medaillon.append(e("span", null, "Plat du jour"));
-  const eyebrow = e("p", "ardoise-titre", "Suggestion du jour");
+  const eyebrow = e("p", "ardoise-titre", "Plat du jour");
   const nom = e("p", "ardoise-plat", PLAT_DU_JOUR.plat);
-  boite.append(medaillon, eyebrow, nom);
+  boite.append(eyebrow, nom);
   if (PLAT_DU_JOUR.detail) boite.append(e("p", "ardoise-detail", PLAT_DU_JOUR.detail));
 
   const bas = e("p", "ardoise-bas");
