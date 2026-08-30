@@ -79,7 +79,15 @@ const ENCADRE = {
 };
 
 /* Bandeau rouge en haut de la carte. Mets  texte: ""  pour le retirer. */
-const ANNONCE = { texte: "Salle climatisée" };
+const ANNONCE = {
+  texte:  "Salle climatisée",
+  /* Message d'alerte affiché en grand, au-dessus du reste.
+     jusqua : dernier jour d'affichage inclus ("" = toujours) */
+  alerte: {
+    texte:  "Fermeture exceptionnelle mercredi 2 septembre au soir",
+    jusqua: "2026-09-02"
+  }
+};
 
 /* ══════════════════════════════════════════════════════════════════
    LE PLAT DU JOUR
@@ -90,9 +98,9 @@ const ANNONCE = { texte: "Salle climatisée" };
 const PLAT_DU_JOUR = {
   /* Le jour où tu annonces un plat, remplis "plat" et "date".
      Sans date, l'annonce reste visible tous les jours jusqu'à l'heure limite. */
-  date:    "2026-08-28",    // "" pour l'afficher chaque jour jusqu'à l'heure limite
-  plat:    "Travers de porc",
-  detail:  "Frites et sauce barbecue",
+  date:    "",              // "" pour l'afficher chaque jour jusqu'à l'heure limite
+  plat:    "",
+  detail:  "",
   prix:    "",              // facultatif, ex : "15,90"
   jusqua:  14,              // heure de disparition (14 = 14h00)
   jusquaMinute: 0,          // minute de disparition (ex : 30 pour 14h30)
@@ -711,6 +719,24 @@ body::before{
 .plat.indispo .plat-nom,.plat.indispo .plat-prix{text-decoration:line-through;opacity:.42}
 .plat.indispo .plat-desc{opacity:.42}
 
+/* ─── Banderole d'alerte ─── */
+.banderole{
+  margin:1.8rem 0 0;padding:1.15rem 1.2rem;
+  text-align:center;border-radius:4px;
+  background:linear-gradient(135deg,#A32A21,#C8382B);
+  color:#FFF;font-size:clamp(1rem,4.4vw,1.25rem);font-weight:700;
+  letter-spacing:.04em;line-height:1.35;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 6px 26px rgba(180,57,47,.4);
+  animation:pulse 2.6s ease-in-out infinite
+}
+.banderole[hidden]{display:none}
+@keyframes pulse{
+  0%,100%{box-shadow:0 6px 26px rgba(180,57,47,.4)}
+  50%{box-shadow:0 6px 34px rgba(180,57,47,.75)}
+}
+@media (prefers-reduced-motion:reduce){ .banderole{animation:none} }
+
 /* ─── Bandeau d'annonce ─── */
 .annonce{
   margin:1.8rem 0 -.6rem;padding:.7rem 1rem;
@@ -904,7 +930,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
   body{background:#fff;color:#111}
   body::before,.barre,.vignette,.arbre,.scene,.resultat,.coeur,.classement,.invitation{display:none}
   .ardoise,.annonce{break-inside:avoid}
-  .annonce{background:none;color:#B4392F;box-shadow:none}
+  .annonce,.banderole{background:none;color:#B4392F;box-shadow:none;animation:none;border:1px solid #B4392F}
   .chapeau{padding:0 0 .8rem}
   .socle{padding:0 0 1rem}
   .enseigne{color:#111}
@@ -958,6 +984,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
     <div class="filtres" id="filtres" hidden></div>
   </div>
 
+  <p class="banderole" id="banderole" hidden></p>
   <p class="annonce" id="annonce" hidden></p>
   <div class="ardoise" id="ardoise" hidden></div>
   <div class="ardoise" id="encadre" hidden></div>
@@ -1154,6 +1181,20 @@ if (ARBRE.section && IMAGES.arbre) {
     const a = e("img", "arbre");
     a.src = IMAGES.arbre; a.alt = ""; a.setAttribute("aria-hidden", "true");
     s.prepend(a);
+  }
+}
+
+/* Banderole d'alerte, retirée d'elle-même après la date indiquée */
+if (ANNONCE.alerte && ANNONCE.alerte.texte) {
+  const jour = new Intl.DateTimeFormat("fr-CA", {
+    timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit"
+  }).format(new Date());
+
+  if (!ANNONCE.alerte.jusqua || jour <= ANNONCE.alerte.jusqua) {
+    const b = document.getElementById("banderole");
+    b.textContent = ANNONCE.alerte.texte;
+    b.removeAttribute("hidden");
+    b.style.display = "block";
   }
 }
 
