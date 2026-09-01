@@ -450,6 +450,7 @@ const NOMS_ALLERGENES = {
 const LANGUES = {
 
   en: {
+    "Prix indicatifs, convertis au taux de la Banque centrale européenne. Paiement en euros.": "Indicative prices, converted at European Central Bank rates. Payment in euros.",
     "Entrées": "Starters",
     "Nos plats": "Main courses",
     "Burgers & haché": "Burgers",
@@ -687,6 +688,7 @@ const LANGUES = {
   },
 
   es: {
+    "Prix indicatifs, convertis au taux de la Banque centrale européenne. Paiement en euros.": "Precios orientativos, convertidos al tipo del Banco Central Europeo. Pago en euros.",
     "Entrées": "Entrantes",
     "Nos plats": "Platos principales",
     "Burgers & haché": "Hamburguesas",
@@ -924,6 +926,7 @@ const LANGUES = {
   },
 
   ja: {
+    "Prix indicatifs, convertis au taux de la Banque centrale européenne. Paiement en euros.": "参考価格です。欧州中央銀行のレートで換算。お支払いはユーロのみとなります。",
     "Entrées": "前菜",
     "Nos plats": "メイン料理",
     "Burgers & haché": "ハンバーガー",
@@ -1161,6 +1164,7 @@ const LANGUES = {
   },
 
   zh: {
+    "Prix indicatifs, convertis au taux de la Banque centrale européenne. Paiement en euros.": "价格仅供参考，按欧洲央行汇率换算。结账以欧元支付。",
     "Entrées": "前菜",
     "Nos plats": "主菜",
     "Burgers & haché": "汉堡",
@@ -1711,6 +1715,13 @@ body::before{
 .pointille{flex:1;min-width:1.2rem;border-bottom:1px dotted rgba(163,143,120,.45);transform:translateY(-.28em)}
 .plat-prix{font-variant-numeric:tabular-nums;font-weight:500;font-size:.95rem;color:var(--laiton);flex:none}
 .plat-desc{margin-top:.25rem;font-size:.885rem;color:var(--sable);max-width:34rem}
+.devise{
+  display:block;text-align:right;margin-top:.12rem;
+  font-size:.72rem;color:rgba(163,143,120,.85);font-variant-numeric:tabular-nums
+}
+.note-devise{
+  margin-top:.4rem;text-align:center;font-size:.72rem;color:var(--fumee)
+}
 
 .etiquettes{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.45rem}
 .tag{
@@ -1957,6 +1968,7 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
   .plat-prix,.tag.suggestion,.bloc h3,.tarif .prix,.sceau,.eyebrow{color:#7a5310}
   .sceau{background:none}
   .plat-desc,.choix-desc{color:#8a6a2a}
+  .devise,.note-devise{color:#777}
   .condition,.mention,.notes p{color:#555}
   .coordonnees,.coordonnees a,.coordonnees .heures{color:#444;border:none}
   .compteur{display:none}
@@ -2055,14 +2067,20 @@ const T = s => {
   return (d && d[s]) ? d[s] : s;
 };
 
-/* Les langues proposées, dans l'ordre du menu */
+/* Les langues proposées, dans l'ordre du menu.
+   devise : monnaie affichée à titre indicatif sous les prix.
+   Laisser vide pour les pays qui utilisent déjà l'euro. */
 const CHOIX_LANGUES = [
-  { code: "fr", nom: "Français" },
-  { code: "en", nom: "English" },
-  { code: "es", nom: "Español" },
-  { code: "ja", nom: "日本語" },
-  { code: "zh", nom: "中文" }
+  { code: "fr", nom: "Français", devise: "" },
+  { code: "en", nom: "English",  devise: "GBP" },
+  { code: "es", nom: "Español",  devise: "" },
+  { code: "ja", nom: "日本語",    devise: "JPY" },
+  { code: "zh", nom: "中文",      devise: "CNY" }
 ];
+
+/* Taux de secours, utilisés si le service de change ne répond pas.
+   Ils servent seulement à donner un ordre de grandeur. */
+const TAUX_SECOURS = { GBP: 0.85, JPY: 165, CNY: 7.6 };
 
 const normaliser = s => (s || "").toLowerCase()
   .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -2397,6 +2415,79 @@ if (RESTO.horaires.length) {
 const infos = document.getElementById("infos");
 if (RESTO.telephone) infos.append(e("p", null, T("Réservations au") + ' <a href="tel:' + RESTO.telephone.replace(/\s/g, "") + '">' + RESTO.telephone + "</a>"));
 document.getElementById("mention").textContent = T(RESTO.piedDePage);
+
+/* ══════════════════════════════════════════════════════════════════
+   Prix indicatifs dans la monnaie du visiteur
+   ------------------------------------------------------------------
+   Taux de référence de la Banque centrale européenne, récupérés une
+   fois par jour et gardés en mémoire. Purement indicatif : le paiement
+   se fait en euros.
+   ══════════════════════════════════════════════════════════════════ */
+(async function devises() {
+  const lang = CHOIX_LANGUES.find(l => l.code === LANGUE);
+  const code = lang && lang.devise;
+  if (!code) return;
+
+  const jour = new Date().toISOString().slice(0, 10);
+  let taux = null;
+
+  try {
+    const cache = JSON.parse(localStorage.getItem("taniere-taux") || "{}");
+    if (cache.jour === jour && cache.code === code) taux = cache.taux;
+  } catch (err) {}
+
+  if (!taux) {
+    try {
+      const r = await fetch("https://api.frankfurter.dev/v1/latest?base=EUR&symbols=" + code);
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.rates && d.rates[code]) {
+          taux = d.rates[code];
+          try {
+            localStorage.setItem("taniere-taux", JSON.stringify({ jour, code, taux }));
+          } catch (err) {}
+        }
+      }
+    } catch (err) { /* hors ligne ou service muet */ }
+  }
+
+  const approximatif = !taux;
+  if (!taux) taux = TAUX_SECOURS[code];
+  if (!taux) return;
+
+  const fmt = new Intl.NumberFormat(
+    { GBP: "en-GB", JPY: "ja-JP", CNY: "zh-CN" }[code] || "fr-FR",
+    { style: "currency", currency: code, maximumFractionDigits: code === "JPY" ? 0 : 2 }
+  );
+
+  /* "17,80" ou "4,60 / 18 / 26" → conversion de chaque montant */
+  function convertir(txt) {
+    const montants = txt.replace(/€/g, "").split("/")
+      .map(x => parseFloat(x.trim().replace(",", ".")))
+      .filter(n => Number.isFinite(n));
+    if (!montants.length) return "";
+    return "≈ " + montants.map(n => fmt.format(n * taux)).join(" / ");
+  }
+
+  document.querySelectorAll(".plat-prix, .tarif .prix").forEach(el => {
+    const conv = convertir(el.textContent);
+    if (!conv) return;
+    const ligne = el.closest(".ligne") || el.closest(".tarif");
+    const cible = el.closest(".plat") || el.closest(".tarif");
+    if (!cible) return;
+    const span = document.createElement("span");
+    span.className = "devise";
+    span.textContent = conv;
+    if (ligne && ligne.classList.contains("tarif")) ligne.after(span);
+    else cible.append(span);
+  });
+
+  const mention = e("p", "note-devise",
+    T("Prix indicatifs, convertis au taux de la Banque centrale européenne. Paiement en euros.")
+    + (approximatif ? " *" : ""));
+  const pied = document.querySelector(".pied .infos");
+  if (pied) pied.before(mention);
+})();
 
 /* Compteur de visites.
    ------------------------------------------------------------------
