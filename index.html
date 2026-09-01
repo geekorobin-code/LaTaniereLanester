@@ -27,6 +27,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="La Tanière">
+<link rel="alternate" hreflang="en" href="./">
 <meta name="theme-color" content="#1D1611">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -422,6 +423,249 @@ const NOMS_ALLERGENES = {
   sesame: "sésame", sulfites: "sulfites", lupin: "lupin"
 };
 
+/* ══════════════════════════════════════════════════════════════════
+   ⑥  TRADUCTION ANGLAISE
+   ------------------------------------------------------------------
+   À gauche le texte français exactement comme il est écrit plus haut,
+   à droite sa traduction. Un texte absent de cette liste reste affiché
+   en français.
+   ══════════════════════════════════════════════════════════════════ */
+const EN = {
+  "Entrées": "Starters",
+  "Nos plats": "Main courses",
+  "Burgers & haché": "Burgers",
+  "Les salades repas": "Main-course salads",
+  "Desserts": "Desserts",
+  "Boissons": "Drinks",
+  "À la carte": "À la carte",
+  "Coupes glacées": "Ice cream sundaes",
+  "Vins": "Wines",
+  "Bières pression": "Draught beers",
+  "Apéritifs": "Aperitifs",
+  "Cocktails": "Cocktails",
+  "Sans alcool": "Alcohol-free",
+  "Salade de chèvre chaud": "Warm goat's cheese salad",
+  "Salade, tomates confites, oignons frits, coppa, copeaux de parmesan, toasts de chèvre chaud": "Salad, confit tomatoes, crispy onions, coppa, parmesan shavings, warm goat's cheese toasts",
+  "Rillettes de saumon": "Salmon rillettes",
+  "Rillettes maison préparées avec du saumon frais": "Homemade, prepared with fresh salmon",
+  "Carpaccio parmesan": "Beef carpaccio with parmesan",
+  "Tomates burrata": "Tomato and burrata",
+  "Camembert rôti": "Roasted camembert",
+  "Miel, pain grillé": "Honey, toasted bread",
+  "Saumon fumé": "Smoked salmon",
+  "Pain grillé, tranches de saumon fumé, chantilly citronnée maison": "Toasted bread, sliced smoked salmon, homemade lemon cream",
+  "Foie gras": "Foie gras",
+  "Confit d'oignons, pain grillé": "Onion confit, toasted bread",
+  "½ poulet français rôti": "Half roast French chicken",
+  "Sauce au choix": "Sauce of your choice",
+  "Andouillette grillée ficelle": "Grilled andouillette sausage",
+  "Tartare au couteau": "Hand-cut beef tartare",
+  "Préparé par nos soins, frites et salade": "Prepared in-house, fries and salad",
+  "Tartare de saumon maison": "Homemade salmon tartare",
+  "Frites": "Fries",
+  "Grande assiette de carpaccio de bœuf": "Large beef carpaccio platter",
+  "Parmesan ou burrata, frites": "Parmesan or burrata, fries",
+  "Pavé de saumon rôti": "Roasted salmon fillet",
+  "Béarnaise": "Béarnaise sauce",
+  "Fish & chips de cabillaud": "Cod fish & chips",
+  "Sauce tartare": "Tartare sauce",
+  "Cœur de rumsteck 200 g": "Rump steak, 200 g",
+  "Jarret de cochon confit": "Confit pork knuckle",
+  "Cuisson 8 heures": "Slow-cooked for 8 hours",
+  "Brochette de Saint-Jacques": "Scallop skewer",
+  "Beurre nantais et poitrine fumée": "Nantais butter and smoked bacon",
+  "Faux-filet de bœuf": "Beef sirloin",
+  "<b>Garnitures</b> — frites, salade, pommes de terre grenailles, haricots verts": "<b>Sides</b> — fries, salad, baby potatoes, green beans",
+  "<b>Sauces</b> — poivre, béarnaise, roquefort, BBQ": "<b>Sauces</b> — pepper, béarnaise, roquefort, BBQ",
+  "<b>Supplément accompagnement</b> — 2,50 €": "<b>Extra side</b> — €2.50",
+  "Le Classique": "The Classic",
+  "Cheddar, crispy bacon, bœuf haché, sauce tanière, salade": "Cheddar, crispy bacon, beef patty, house sauce, salad",
+  "Le Burger poulet": "The Chicken Burger",
+  "Poulet croustillant, sauce burger, bacon, cheddar": "Crispy chicken, burger sauce, bacon, cheddar",
+  "Le Végé": "The Veggie",
+  "Tatin de légumes, burrata, salade, confit d'oignons": "Vegetable tatin, burrata, salad, onion confit",
+  "César": "Caesar",
+  "Salade, oignons frits, tomates confites, œuf poché, parmesan, poulet frit, coppa, sauce César": "Salad, crispy onions, confit tomatoes, poached egg, parmesan, fried chicken, coppa, Caesar dressing",
+  "Chèvre": "Goat's cheese",
+  "Salade, toasts de chèvre, saumon fumé, parmesan, tomates confites": "Salad, goat's cheese toasts, smoked salmon, parmesan, confit tomatoes",
+  "Italienne": "Italian",
+  "Pain pinsa, salade, tomates cerises, coppa, olives, burrata, parmesan, huile d'olive, tapenade de tomates séchées": "Pinsa bread, salad, cherry tomatoes, coppa, olives, burrata, parmesan, olive oil, sun-dried tomato tapenade",
+  "Cheesecake": "Cheesecake",
+  "Coulis caramel ou fruits rouges": "Caramel or red berry coulis",
+  "Crème brûlée": "Crème brûlée",
+  "À la vanille bourbon": "With bourbon vanilla",
+  "Brioche façon pain perdu": "Brioche French toast",
+  "Boule de glace vanille et sa chantilly": "Scoop of vanilla ice cream and whipped cream",
+  "Fondant au chocolat": "Chocolate fondant",
+  "Crème anglaise et chantilly": "Custard and whipped cream",
+  "Café ou thé gourmand": "Coffee or tea with mini desserts",
+  "Accompagné de sa crème brûlée, sa panna cotta, sa boule de glace vanille et son muffin": "Served with crème brûlée, panna cotta, a scoop of vanilla ice cream and a muffin",
+  "Baba au rhum": "Rum baba",
+  "Servi avec son verre de vieux rhum Don Papa, chantilly et coulis de caramel": "Served with a glass of aged Don Papa rum, whipped cream and caramel coulis",
+  "2 boules de glace": "2 scoops of ice cream",
+  "2 boules de glace au choix": "2 scoops of your choice",
+  "Chocolat, vanille, fraise, caramel beurre salé, noix de coco, noix, nougat, pistache, cassis, citron vert, passion, café": "Chocolate, vanilla, strawberry, salted caramel, coconut, walnut, nougat, pistachio, blackcurrant, lime, passion fruit, coffee",
+  "Coupe dame blanche": "Dame Blanche sundae",
+  "3 boules vanille, chocolat chaud, chantilly": "3 vanilla scoops, hot chocolate sauce, whipped cream",
+  "Caramel liégeois": "Caramel liégeois",
+  "3 boules caramel, caramel au lait, chantilly": "3 caramel scoops, milk caramel, whipped cream",
+  "Chocolat liégeois": "Chocolate liégeois",
+  "3 boules chocolat, chocolat chaud, chantilly": "3 chocolate scoops, hot chocolate, whipped cream",
+  "Coupe America": "America sundae",
+  "1 boule vanille, 1 boule caramel, 1 boule chocolat, brownie, chantilly": "1 vanilla, 1 caramel and 1 chocolate scoop, brownie, whipped cream",
+  "Pêche Melba": "Peach Melba",
+  "Glace vanille, ½ pêche, coulis de fruits rouges, chantilly": "Vanilla ice cream, half a peach, red berry coulis, whipped cream",
+  "Coupe colonel": "Colonel sundae",
+  "3 boules citron vert, vodka": "3 lime scoops, vodka",
+  "Au verre 12 cl · carafe 50 cl · bouteille 75 cl": "Glass 12 cl · carafe 50 cl · bottle 75 cl",
+  "Rosé corse Umanu": "Umanu Corsican rosé",
+  "Blanc": "White",
+  "Blanc, récoltant": "White, estate-bottled",
+  "Chardonnay": "Chardonnay",
+  "Quincy, domaine Siret": "Quincy, Domaine Siret",
+  "Moelleux IGP du Tarn": "Sweet white, IGP du Tarn",
+  "Rouge": "Red",
+  "Saint-Nicolas-de-Bourgueil": "Saint-Nicolas-de-Bourgueil",
+  "Côtes-du-Rhône bio": "Organic Côtes-du-Rhône",
+  "Rouge du mois": "Red of the month",
+  "<b>Vin en carafe</b> — 25 cl 6 € · 50 cl 12 €": "<b>House wine carafe</b> — 25 cl €6 · 50 cl €12",
+  "25 cl · 33 cl · 50 cl": "25 cl · 33 cl · 50 cl",
+  "Loburg": "Loburg",
+  "Leffe": "Leffe",
+  "Triple Karmeliet": "Triple Karmeliet",
+  "Ricard, Porto, Martini, J&B, Suze": "Ricard, Port, Martini, J&B, Suze",
+  "4 cl": "4 cl",
+  "12 cl": "12 cl",
+  "50 cl": "50 cl",
+  "1 litre": "1 litre",
+  "Kir": "Kir",
+  "Kir pétillant": "Sparkling kir",
+  "Oban, Knockando, Glenmorangie": "Oban, Knockando, Glenmorangie",
+  "Whisky, 4 cl": "Whisky, 4 cl",
+  "Lagavulin": "Lagavulin",
+  "Moscow mule": "Moscow mule",
+  "Vodka, ginger beer La French, citron vert": "Vodka, La French ginger beer, lime",
+  "Spritz": "Spritz",
+  "Aperol, pétillant, Perrier, orange": "Aperol, sparkling wine, Perrier, orange",
+  "Caïpirinha": "Caipirinha",
+  "Cachaça, citron vert, sucre de canne": "Cachaça, lime, cane sugar",
+  "Negroni": "Negroni",
+  "Gin, Campari, martini rouge, rondelle d'orange": "Gin, Campari, red vermouth, orange slice",
+  "Sex on the beach": "Sex on the beach",
+  "Vodka, crème de pêche, ananas, cranberry": "Vodka, peach schnapps, pineapple, cranberry",
+  "Piña colada": "Piña colada",
+  "Rhum, lait de coco, jus d'ananas": "Rum, coconut milk, pineapple juice",
+  "Cocktail de fruits": "Fruit cocktail",
+  "Virgin piña colada": "Virgin piña colada",
+  "Virgin sex on the beach": "Virgin sex on the beach",
+  "Sodas et jus de fruits": "Soft drinks and fruit juices",
+  "Eau plate ou pétillante": "Still or sparkling water",
+  "Café": "Coffee",
+  "Thé": "Tea",
+  "L'abus d'alcool est dangereux pour la santé. À consommer avec modération.": "Excessive drinking is harmful to health. Please drink responsibly.",
+  "Menu Tanière": "Tanière Menu",
+  "Midi et soir, 7 jours sur 7": "Lunch and dinner, 7 days a week",
+  "Menu midi": "Lunch Menu",
+  "Du lundi au vendredi, hors jours fériés": "Monday to Friday, excluding public holidays",
+  "Menu enfant": "Children's Menu",
+  "Jusqu'à 10 ans": "Up to 10 years old",
+  "Entrée + plat, ou plat + dessert": "Starter + main, or main + dessert",
+  "Entrée + plat + dessert": "Starter + main + dessert",
+  "Plat + dessert + boisson": "Main + dessert + drink",
+  "Entrées au choix": "Choice of starter",
+  "Plats au choix": "Choice of main",
+  "Desserts au choix": "Choice of dessert",
+  "Plat au choix": "Choice of main",
+  "Dessert au choix": "Choice of dessert",
+  "Camembert rôti au miel": "Roasted camembert with honey",
+  "Saumon fumé et pain grillé": "Smoked salmon and toasted bread",
+  "Supplément 3 €": "€3 supplement",
+  "Supplément 4 €": "€4 supplement",
+  "Foie gras, confit d'oignons, pain grillé": "Foie gras, onion confit, toasted bread",
+  "Saumon rôti béarnaise": "Roasted salmon with béarnaise",
+  "Andouillette grillée, sauce au choix": "Grilled andouillette, sauce of your choice",
+  "Pavé de rumsteck 200 g": "Rump steak, 200 g",
+  "Burger classique ou poulet": "Classic or chicken burger",
+  "Brochette de Saint-Jacques, beurre blanc, poitrine fumée": "Scallop skewer, beurre blanc, smoked bacon",
+  "Panna cotta fruits rouges": "Red berry panna cotta",
+  "Cheesecake caramel": "Caramel cheesecake",
+  "Dame blanche": "Dame Blanche",
+  "Farandole des desserts": "Dessert medley",
+  "Mini crème brûlée, mini panna cotta, glace vanille, mini muffins": "Mini crème brûlée, mini panna cotta, vanilla ice cream, mini muffins",
+  "Œuf cocotte chorizo Saint-Marcellin": "Baked egg with chorizo and Saint-Marcellin cheese",
+  "Tomate burrata": "Tomato and burrata",
+  "Salade César": "Caesar salad",
+  "Plat du jour": "Dish of the day",
+  "Fish & chips": "Fish & chips",
+  "Pièce du boucher en brochette": "Butcher's cut skewer",
+  "Brochette de poulet au curry": "Curried chicken skewer",
+  "Tartare préparé par nos soins": "Beef tartare prepared in-house",
+  "Andouillette grillée": "Grilled andouillette",
+  "Burger classique": "Classic burger",
+  "Haché frites": "Beef patty and fries",
+  "Poulet croustillant frites": "Crispy chicken and fries",
+  "Brownie": "Brownie",
+  "Sundae vanille": "Vanilla sundae",
+  "Sundae fraise": "Strawberry sundae",
+  "Coulis caramel, fruits rouges ou chocolat, noix de pécan": "Caramel, red berry or chocolate coulis, pecan nuts",
+  "Coulis fruits rouges, chocolat ou caramel, noix de pécan": "Red berry, chocolate or caramel coulis, pecan nuts",
+  "Coca": "Coca-Cola",
+  "Fanta": "Fanta",
+  "Sirop à l'eau": "Fruit cordial",
+  "Restaurant": "Restaurant",
+  "Ouvert tous les jours — 12h à 14h et 19h à 21h30": "Open daily — 12–2 pm and 7–9.30 pm",
+  "Vendredi et samedi : service du soir jusqu'à 22h": "Friday and Saturday: dinner served until 10 pm",
+  "Prix en euros, taxes et service compris. Liste des allergènes disponible sur demande auprès de votre serveur.": "Prices in euros, taxes and service included. Allergen information available on request from your server.",
+  "Salle climatisée": "Air-conditioned dining room",
+  "Salle climatisée · Terrasse ouverte": "Air-conditioned room · Terrace open",
+  "Carte du": "Menu of",
+  "Carte à jour": "Menu up to date",
+  "Réservations au": "Bookings on",
+  "Notre salle": "Our dining room",
+  "Rechercher un plat, un ingrédient…": "Search a dish or ingredient…",
+  "Filtres": "Filters",
+  "Préférences": "Preferences",
+  "Je ne peux pas manger": "I can't eat",
+  "Filtre indicatif. Des traces sont possibles, les plats étant préparés dans une cuisine commune. Signalez toujours votre allergie à votre serveur avant de commander.": "This filter is indicative only. Traces are possible as dishes are prepared in a shared kitchen. Always inform your server of any allergy before ordering.",
+  "Aucun plat ne correspond à cette combinaison.": "No dish matches this combination.",
+  "résultat": "result",
+  "résultats": "results",
+  "menus exclus, demandez à votre serveur": "set menus excluded, please ask your server",
+  "Aimez vos plats préférés": "Rate your favourite dishes",
+  "Touchez le cœur à côté d'un plat qui vous a plu. Cela nous aide à connaître vos favoris.": "Tap the heart next to a dish you enjoyed. It helps us know your favourites.",
+  "J'aime ce plat": "I like this dish",
+  "végé": "vegetarian",
+  "suggestion du chef": "chef's suggestion",
+  "épuisé": "sold out",
+  "nouveau": "new",
+  "Servi ce midi": "Served at lunch",
+  "Les plats préférés": "Most-liked dishes",
+  "Aucun cœur pour le moment.": "No hearts yet.",
+  "Comptage en cours…": "Counting…",
+  "au total": "in total",
+  "aujourd'hui": "today",
+  "Compteur indisponible": "Counter unavailable",
+  "Appel bloqué par le navigateur": "Request blocked by the browser",
+  "Appareil recompté": "Device counted again",
+  "gluten": "gluten",
+  "lait": "milk",
+  "œufs": "eggs",
+  "poisson": "fish",
+  "crustacés": "crustaceans",
+  "mollusques": "molluscs",
+  "fruits à coque": "tree nuts",
+  "arachides": "peanuts",
+  "soja": "soya",
+  "céleri": "celery",
+  "moutarde": "mustard",
+  "sésame": "sesame",
+  "sulfites": "sulphites",
+  "lupin": "lupin",
+  "Salade chèvre & saumon fumé": "Goat's cheese & smoked salmon salad",
+  "Salade italienne": "Italian salad",
+  "Carpaccio de bœuf & burrata": "Beef carpaccio & burrata",
+};
+
 /* Ordre d'affichage des sections. Pour déplacer un bloc,
    il suffit de déplacer son identifiant dans cette liste. */
 const ORDRE = ["entrees", "plats", "burgers", "salades", "desserts",
@@ -554,6 +798,12 @@ body::before{
   transition:color .2s,border-color .2s
 }
 .filtre-btn:hover,.filtre-btn[aria-expanded="true"]{color:var(--laiton);border-color:var(--laiton)}
+.langue{
+  flex:none;padding:.3rem .6rem;border:1px solid rgba(217,164,65,.3);border-radius:999px;
+  background:none;color:var(--fumee);font-family:var(--texte);font-size:.72rem;
+  font-weight:700;letter-spacing:.08em;cursor:pointer;transition:color .2s,border-color .2s
+}
+.langue:hover{color:var(--laiton);border-color:var(--laiton)}
 .pastille{
   min-width:16px;height:16px;padding:0 4px;border-radius:999px;
   background:var(--laiton);color:var(--ecorce);
@@ -977,8 +1227,9 @@ a:focus-visible{outline:2px solid var(--laiton);outline-offset:3px}
              autocomplete="off" aria-label="Rechercher dans la carte">
       <button class="vider" id="vider" type="button" aria-label="Effacer" hidden>&times;</button>
       <button class="filtre-btn" id="filtre-btn" type="button" aria-expanded="false">
-        Filtres<span class="pastille" id="pastille" hidden></span>
+        <span id="mot-filtres">Filtres</span><span class="pastille" id="pastille" hidden></span>
       </button>
+      <button class="langue" id="langue" type="button" aria-label="English version">EN</button>
     </div>
     <nav class="nav" aria-label="Sections de la carte"><ul id="nav"></ul></nav>
     <div class="filtres" id="filtres" hidden></div>
@@ -1023,6 +1274,14 @@ const IMAGES = {
 </script>
 
 <script>
+/* Langue choisie, mémorisée d'une visite à l'autre */
+let LANGUE = "fr";
+try { LANGUE = localStorage.getItem("taniere-langue") || "fr"; } catch (err) {}
+document.documentElement.lang = LANGUE;
+
+/* Traduit un texte s'il figure dans le dictionnaire, sinon le laisse tel quel */
+const T = s => (LANGUE === "en" && EN[s]) ? EN[s] : s;
+
 const normaliser = s => (s || "").toLowerCase()
   .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
@@ -1031,7 +1290,7 @@ const e = (t, c, h) => { const n = document.createElement(t); if (c) n.className
 /* En-tête */
 document.getElementById("logo").src = IMAGES.logo;
 document.getElementById("cliche").style.backgroundImage = "url('" + IMAGES.banniere + "')";
-document.getElementById("eyebrow").textContent = RESTO.eyebrow;
+document.getElementById("eyebrow").textContent = T(RESTO.eyebrow);
 document.getElementById("enseigne").textContent = RESTO.nom;
 document.getElementById("maj").textContent = dateDeMaj();
 
@@ -1039,16 +1298,16 @@ document.getElementById("maj").textContent = dateDeMaj();
    Si l'information manque (fichier ouvert en local, par exemple), on affiche
    simplement « Carte à jour » plutôt qu'une date fausse. */
 function dateDeMaj() {
-  if (RESTO.maj && RESTO.maj !== "auto") return "Carte du " + RESTO.maj;
+  if (RESTO.maj && RESTO.maj !== "auto") return T("Carte du") + " " + RESTO.maj;
 
   const d = new Date(document.lastModified);
-  if (isNaN(d)) return "Carte à jour";
+  if (isNaN(d)) return T("Carte à jour");
 
   /* Sans en-tête Last-Modified, le navigateur renvoie l'heure courante :
      on l'écarte pour ne pas afficher la date du jour à tort. */
-  if (Math.abs(Date.now() - d.getTime()) < 60000) return "Carte à jour";
+  if (Math.abs(Date.now() - d.getTime()) < 60000) return T("Carte à jour");
 
-  return "Carte du " + d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  return T("Carte du") + " " + d.toLocaleDateString(LANGUE === "en" ? "en-GB" : "fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 document.title = RESTO.nom + " — La carte";
 
@@ -1058,13 +1317,13 @@ function rendrePlat(p) {
   const el = e("article", "plat" + (dispo ? "" : " indispo"));
 
   const ligne = e("div", "ligne");
-  ligne.append(e("h3", "plat-nom", p.nom), e("span", "pointille"));
+  ligne.append(e("h3", "plat-nom", T(p.nom)), e("span", "pointille"));
   if (p.prix) ligne.append(e("span", "plat-prix", p.prix + " €"));
 
   const coeur = e("button", "coeur");
   coeur.type = "button";
   coeur.dataset.plat = p.nom;
-  coeur.title = "J'aime ce plat";
+  coeur.title = T("J'aime ce plat");
   coeur.setAttribute("aria-label", "J'aime : " + p.nom);
   coeur.setAttribute("aria-pressed", "false");
   coeur.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
@@ -1073,7 +1332,7 @@ function rendrePlat(p) {
 
   el.append(ligne);
 
-  if (p.desc) el.append(e("p", "plat-desc", p.desc));
+  if (p.desc) el.append(e("p", "plat-desc", T(p.desc)));
   el.dataset.texte = normaliser([p.nom, p.desc, (p.tags || []).join(" ")].join(" "));
   const al = ALLERGENES[p.nom];
   el.dataset.allergenes = al ? al.join(" ") : "?";   // "?" = composition non renseignée
@@ -1084,7 +1343,7 @@ function rendrePlat(p) {
     const box = e("div", "etiquettes");
     tags.forEach(t => {
       const cls = t === "épuisé" ? "epuise" : t === "suggestion" ? "suggestion" : t === "nouveau" ? "nouveau" : "";
-      box.append(e("span", "tag " + cls, t === "suggestion" ? "suggestion du chef" : t));
+      box.append(e("span", "tag " + cls, T(t === "suggestion" ? "suggestion du chef" : t)));
     });
     el.append(box);
   }
@@ -1096,22 +1355,22 @@ function rendreSection(s) {
   const sec = e("section", "section");
   sec.id = s.id;
   const th = e("div", "section-titre");
-  th.append(e("h2", null, s.titre), e("span", "filet"));
+  th.append(e("h2", null, T(s.titre)), e("span", "filet"));
   sec.append(th);
   (s.plats || []).forEach(p => sec.append(rendrePlat(p)));
 
   (s.groupes || []).forEach(g => {
     const box = e("div", "groupe");
-    box.append(e("h3", null, g.titre));
-    if (g.note) box.append(e("p", "groupe-note", g.note));
+    box.append(e("h3", null, T(g.titre)));
+    if (g.note) box.append(e("p", "groupe-note", T(g.note)));
     g.plats.forEach(p => box.append(rendrePlat(p)));
-    (g.notes || []).forEach(t => box.append(e("p", "groupe-pied", t)));
+    (g.notes || []).forEach(t => box.append(e("p", "groupe-pied", T(t))));
     sec.append(box);
   });
 
   if (s.notes && s.notes.length) {
     const n = e("div", "notes");
-    s.notes.forEach(t => n.append(e("p", null, t)));
+    s.notes.forEach(t => n.append(e("p", null, T(t))));
     sec.append(n);
   }
   return sec;
@@ -1122,28 +1381,28 @@ function rendreFormule(f) {
   const sec = e("section", "section");
   sec.id = f.id;
   const th = e("div", "section-titre");
-  th.append(e("h2", null, f.titre), e("span", "filet"));
+  th.append(e("h2", null, T(f.titre)), e("span", "filet"));
   sec.append(th);
 
   const box = e("div", "formule");
-  if (f.condition) box.append(e("p", "condition", f.condition));
+  if (f.condition) box.append(e("p", "condition", T(f.condition)));
 
   const tarifs = e("div", "tarifs");
   f.tarifs.forEach(t => {
     const l = e("div", "tarif");
-    l.append(e("span", "lbl", t.label), e("span", "pointille"), e("span", "prix", t.prix + " €"));
+    l.append(e("span", "lbl", T(t.label)), e("span", "pointille"), e("span", "prix", t.prix + " €"));
     tarifs.append(l);
   });
   box.append(tarifs);
 
   f.listes.forEach(b => {
     const bloc = e("div", "bloc");
-    bloc.append(e("h3", null, b.titre));
+    bloc.append(e("h3", null, T(b.titre)));
     const ul = e("ul");
     b.choix.forEach(c => {
       const nom = typeof c === "string" ? c : c.nom;
-      const li = e("li", null, nom);
-      if (c.desc) li.append(e("span", "choix-desc", c.desc));
+      const li = e("li", null, T(nom));
+      if (c.desc) li.append(e("span", "choix-desc", T(c.desc)));
       li.dataset.texte = normaliser(nom + " " + (c.desc || ""));
       ul.append(li);
     });
@@ -1168,7 +1427,7 @@ const toutes = [...CARTE.map(s => ({ id: s.id, titre: s.titre, el: rendreSection
 toutes.forEach(s => {
   main.append(s.el);
   const li = e("li");
-  const a = e("a", null, s.titre);
+  const a = e("a", null, T(s.titre));
   a.href = "#" + s.id;
   li.append(a);
   nav.append(li);
@@ -1192,7 +1451,7 @@ if (ANNONCE.alerte && ANNONCE.alerte.texte) {
 
   if (!ANNONCE.alerte.jusqua || jour <= ANNONCE.alerte.jusqua) {
     const b = document.getElementById("banderole");
-    b.textContent = ANNONCE.alerte.texte;
+    b.textContent = T(ANNONCE.alerte.texte);
     b.removeAttribute("hidden");
     b.style.display = "block";
   }
@@ -1201,7 +1460,7 @@ if (ANNONCE.alerte && ANNONCE.alerte.texte) {
 /* Bandeau d'annonce */
 if (ANNONCE.texte) {
   const a = document.getElementById("annonce");
-  a.textContent = ANNONCE.texte;
+  a.textContent = T(ANNONCE.texte);
   a.hidden = false;
 }
 
@@ -1218,9 +1477,9 @@ if (ANNONCE.texte) {
   }
 
   if (ENCADRE.alerte) boite.classList.add("alerte");
-  if (ENCADRE.titre)  boite.append(e("p", "ardoise-titre", ENCADRE.titre));
-  if (ENCADRE.texte)  boite.append(e("p", "ardoise-plat", ENCADRE.texte));
-  if (ENCADRE.detail) boite.append(e("p", "ardoise-detail", ENCADRE.detail));
+  if (ENCADRE.titre)  boite.append(e("p", "ardoise-titre", T(ENCADRE.titre)));
+  if (ENCADRE.texte)  boite.append(e("p", "ardoise-plat", T(ENCADRE.texte)));
+  if (ENCADRE.detail) boite.append(e("p", "ardoise-detail", T(ENCADRE.detail)));
   boite.hidden = false;
 })();
 
@@ -1260,13 +1519,13 @@ if (ANNONCE.texte) {
   }
 
   boite.innerHTML = "";
-  const eyebrow = e("p", "ardoise-titre", "Plat du jour");
-  const nom = e("p", "ardoise-plat", PLAT_DU_JOUR.plat);
+  const eyebrow = e("p", "ardoise-titre", T("Plat du jour"));
+  const nom = e("p", "ardoise-plat", T(PLAT_DU_JOUR.plat));
   boite.append(eyebrow, nom);
-  if (PLAT_DU_JOUR.detail) boite.append(e("p", "ardoise-detail", PLAT_DU_JOUR.detail));
+  if (PLAT_DU_JOUR.detail) boite.append(e("p", "ardoise-detail", T(PLAT_DU_JOUR.detail)));
 
   const bas = e("p", "ardoise-bas");
-  if (PLAT_DU_JOUR.mention) bas.append(e("span", null, PLAT_DU_JOUR.mention));
+  if (PLAT_DU_JOUR.mention) bas.append(e("span", null, T(PLAT_DU_JOUR.mention)));
   if (PLAT_DU_JOUR.prix) {
     if (PLAT_DU_JOUR.mention) bas.append(e("span", "sep", " · "));
     bas.append(e("span", "ardoise-prix", PLAT_DU_JOUR.prix + " €"));
@@ -1287,8 +1546,8 @@ if (INVITATION.section) {
       '<svg viewBox="0 0 24 24" aria-hidden="true">' +
       '<path d="M12 20.5 4.2 12.9a4.6 4.6 0 0 1 0-6.6 4.8 4.8 0 0 1 6.7 0l1.1 1.1 1.1-1.1a4.8 4.8 0 0 1 6.7 0 4.6 4.6 0 0 1 0 6.6Z"/></svg>';
     const bloc = e("div");
-    bloc.append(e("p", "invitation-titre", INVITATION.titre),
-                e("p", "invitation-texte", INVITATION.texte));
+    bloc.append(e("p", "invitation-titre", T(INVITATION.titre)),
+                e("p", "invitation-texte", T(INVITATION.texte)));
     mot.append(bloc);
     cible.querySelector(".section-titre").after(mot);
   }
@@ -1305,10 +1564,10 @@ PHOTOS_PLATS.forEach(bloc => {
       fig.style.setProperty("--haut", p.haut);
       const img = e("img");
       img.src = IMAGES[p.cle];
-      img.alt = p.legende;
+      img.alt = T(p.legende);
       img.loading = "lazy";
       fig.append(img);
-      if (p.legende) fig.append(e("figcaption", null, p.legende));
+      if (p.legende) fig.append(e("figcaption", null, T(p.legende)));
       galerie.append(fig);
     });
     cible.prepend(galerie);
@@ -1325,7 +1584,7 @@ if (VIGNETTE.apres && IMAGES.salle) {
     img.alt = "La salle du restaurant " + RESTO.nom;
     img.loading = "lazy";
     fig.append(img);
-    if (VIGNETTE.legende) fig.append(e("figcaption", null, VIGNETTE.legende));
+    if (VIGNETTE.legende) fig.append(e("figcaption", null, T(VIGNETTE.legende)));
     cible.append(fig);
   }
 }
@@ -1346,14 +1605,14 @@ if (RESTO.telephone) {
 if (contact.childNodes.length) coord.append(contact);
 if (RESTO.horaires.length) {
   const hr = e("div", "heures");
-  RESTO.horaires.forEach((t, i) => { if (i) hr.append(document.createElement("br")); hr.append(t); });
+  RESTO.horaires.forEach((t, i) => { if (i) hr.append(document.createElement("br")); hr.append(T(t)); });
   coord.append(hr);
 }
 
 /* Pied de page */
 const infos = document.getElementById("infos");
-if (RESTO.telephone) infos.append(e("p", null, 'Réservations au <a href="tel:' + RESTO.telephone.replace(/\s/g, "") + '">' + RESTO.telephone + "</a>"));
-document.getElementById("mention").textContent = RESTO.piedDePage;
+if (RESTO.telephone) infos.append(e("p", null, T("Réservations au") + ' <a href="tel:' + RESTO.telephone.replace(/\s/g, "") + '">' + RESTO.telephone + "</a>"));
+document.getElementById("mention").textContent = T(RESTO.piedDePage);
 
 /* Compteur de visites.
    ------------------------------------------------------------------
@@ -1491,14 +1750,14 @@ async function classement() {
 
 function afficherClassement(scores) {
   panneau.innerHTML = "";
-  panneau.append(e("h3", null, "Les plats préférés"));
+  panneau.append(e("h3", null, T("Les plats préférés")));
   if (!scores.length) {
-    panneau.append(e("p", "vide", "Aucun cœur pour le moment."));
+    panneau.append(e("p", "vide", T("Aucun cœur pour le moment.")));
   } else {
     const ol = e("ol");
     scores.slice(0, 12).forEach(([nom, n]) => {
       const li = e("li");
-      li.append(e("span", "nom", nom), e("span", "score", n + " ♥"));
+      li.append(e("span", "nom", T(nom)), e("span", "score", n + " ♥"));
       ol.append(li);
     });
     panneau.append(ol);
@@ -1513,7 +1772,7 @@ jeton.addEventListener("pointerdown", () => {
     appuiLong = null;
     patron = false;
     memoire(false);
-    afficher("Appareil recompté");
+    afficher(T("Appareil recompté"));
   }, 1000);
 });
 
@@ -1545,15 +1804,15 @@ jeton.addEventListener("click", async () => {
     }
   }
 
-  if (visites === "reseau") { afficher("Appel bloqué par le navigateur"); return; }
-  if (!estNombre(visites)) { afficher("Compteur indisponible"); return; }
+  if (visites === "reseau") { afficher(T("Appel bloqué par le navigateur")); return; }
+  if (!estNombre(visites)) { afficher(T("Compteur indisponible")); return; }
   const jour = estNombre(visitesJour)
-    ? " &nbsp;·&nbsp; <b>" + visitesJour.toLocaleString("fr-FR") + "</b>&nbsp;aujourd'hui"
+    ? " &nbsp;·&nbsp; <b>" + visitesJour.toLocaleString("fr-FR") + "</b>&nbsp;" + T("aujourd'hui")
     : "";
-  afficher("<b>" + visites.toLocaleString("fr-FR") + "</b>&nbsp;au total" + jour);
+  afficher("<b>" + visites.toLocaleString("fr-FR") + "</b>&nbsp;" + T("au total") + jour);
 
   panneau.innerHTML = "";
-  panneau.append(e("h3", null, "Les plats préférés"), e("p", "vide", "Comptage en cours…"));
+  panneau.append(e("h3", null, T("Les plats préférés")), e("p", "vide", T("Comptage en cours…")));
   panneau.hidden = false;
   afficherClassement(await classement());
 });
@@ -1599,7 +1858,7 @@ const evites = new Set();      // allergènes à exclure
 
 function groupeFiltres(titre) {
   const bloc = e("div", "groupe-filtre");
-  bloc.append(e("p", "titre-filtre", titre));
+  bloc.append(e("p", "titre-filtre", T(titre)));
   const rangee = e("div", "rangee-puces");
   bloc.append(rangee);
   zoneFiltres.append(bloc);
@@ -1609,7 +1868,7 @@ function groupeFiltres(titre) {
 if (etiquettes.length) {
   const rangee = groupeFiltres("Préférences");
   etiquettes.forEach(t => {
-    const b = e("button", "puce", t === "suggestion" ? "suggestion du chef" : t);
+    const b = e("button", "puce", T(t === "suggestion" ? "suggestion du chef" : t));
     b.type = "button";
     b.setAttribute("aria-pressed", "false");
     b.addEventListener("click", () => {
@@ -1628,7 +1887,7 @@ const listeAllergenes = [...new Set(Object.values(ALLERGENES).flat())]
 if (listeAllergenes.length) {
   const rangee = groupeFiltres("Je ne peux pas manger");
   listeAllergenes.forEach(a => {
-    const b = e("button", "puce", NOMS_ALLERGENES[a] || a);
+    const b = e("button", "puce", T(NOMS_ALLERGENES[a] || a));
     b.type = "button";
     b.setAttribute("aria-pressed", "false");
     b.addEventListener("click", () => {
@@ -1638,9 +1897,9 @@ if (listeAllergenes.length) {
     });
     rangee.append(b);
   });
-  zoneFiltres.append(e("p", "avertissement",
+  zoneFiltres.append(e("p", "avertissement", T(
     "Filtre indicatif. Des traces sont possibles, les plats étant préparés dans une cuisine commune. " +
-    "Signalez toujours votre allergie à votre serveur avant de commander."));
+    "Signalez toujours votre allergie à votre serveur avant de commander.")));
 }
 
 boutonFiltre.addEventListener("click", () => {
@@ -1711,11 +1970,26 @@ function filtrer() {
 
   if (!actif) { ligneResultat.hidden = true; return; }
   ligneResultat.hidden = false;
-  const suffixe = evites.size ? " &nbsp;·&nbsp; menus exclus, demandez à votre serveur" : "";
+  const suffixe = evites.size ? " &nbsp;·&nbsp; " + T("menus exclus, demandez à votre serveur") : "";
   ligneResultat.innerHTML = total
-    ? "<b>" + total + "</b> résultat" + (total > 1 ? "s" : "") + suffixe
-    : "Aucun plat ne correspond à cette combinaison.";
+    ? "<b>" + total + "</b> " + T(total > 1 ? "résultats" : "résultat") + suffixe
+    : T("Aucun plat ne correspond à cette combinaison.");
 }
+
+/* Bascule français / anglais */
+(function langue() {
+  const btn = document.getElementById("langue");
+  btn.textContent = LANGUE === "en" ? "FR" : "EN";
+  btn.setAttribute("aria-label", LANGUE === "en" ? "Version française" : "English version");
+
+  champ.placeholder = T("Rechercher un plat, un ingrédient…");
+  document.getElementById("mot-filtres").textContent = T("Filtres");
+
+  btn.addEventListener("click", () => {
+    try { localStorage.setItem("taniere-langue", LANGUE === "en" ? "fr" : "en"); } catch (err) {}
+    location.reload();
+  });
+})();
 
 /* Dégradés du menu selon la position du défilement */
 const barreNav = document.querySelector(".nav");
