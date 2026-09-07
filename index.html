@@ -154,6 +154,7 @@ const PHOTOS_PLATS = [
     { cle: "carpaccio", legende: "Carpaccio de bœuf & burrata", cote: "gauche", haut: "17rem" },
     { cle: "poulet",  legende: "½ poulet français rôti",     cote: "droite", haut: "0.5rem" },
     { cle: "saumon",  legende: "Pavé de saumon rôti",        cote: "droite", haut: "20rem" },
+    { cle: "jacques", legende: "Brochette de Saint-Jacques", cote: "droite", haut: "38.5rem" },
   ]}
 ];
 
@@ -194,6 +195,7 @@ const CARTE = [
     { nom: "Fish & chips de cabillaud",     desc: "Sauce tartare", prix: "17,80" },
     { nom: "Cœur de rumsteck 200 g",        prix: "18,90" },
     { nom: "Jarret de cochon confit",       desc: "Cuisson 8 heures", prix: "22,50", tags: ["suggestion"] },
+    { nom: "Brochette de Saint-Jacques",    desc: "Beurre nantais et poitrine fumée", prix: "26,00" },
     { nom: "Faux-filet de bœuf",            prix: "26,50" }
   ],
     notes: [
@@ -315,6 +317,7 @@ const FORMULES = [
         "Pavé de rumsteck 200 g",
         "½ poulet rôti fermier français",
         "Burger classique ou poulet",
+        { nom: "Brochette de Saint-Jacques, beurre blanc, poitrine fumée", desc: "Supplément 4 €" }
       ]},
       { titre: "Desserts au choix", choix: [
         "Panna cotta fruits rouges",
@@ -388,6 +391,7 @@ const ALLERGENES = {
   "Fish & chips de cabillaud":     ["poissons", "gluten", "oeufs", "moutarde"],
   "Cœur de rumsteck 200 g":        [],
   "Jarret de cochon confit":       ["celeri", "sulfites"],
+  "Brochette de Saint-Jacques":    ["mollusques", "lait", "sulfites"],
   "Faux-filet de bœuf":            [],
 
   /* Burgers */
