@@ -152,6 +152,10 @@
 }
 
 
+/* Français conservé sous la traduction */
+.fr-original{display:none!important;margin-top:3px;color:#d9a64a!important;font-size:.78em!important;font-weight:600!important;line-height:1.3!important;font-style:normal!important}
+html.translated-ltr .fr-original,html.translated-rtl .fr-original,body.show-fr-original .fr-original{display:block!important}
+.fr-original.fr-title{font-size:.55em!important;margin-top:2px}
 /* Sélecteur de langue */
 .lang-wrap{display:flex;align-items:center;gap:8px;flex:0 0 auto}.lang-label{color:#d9c9b8;font-size:13px;font-weight:700;white-space:nowrap}.goog-te-gadget{font-size:0!important}.goog-te-gadget .goog-te-combo{margin:0!important;background:#2b201a;color:#fff;border:1px solid #5c4435;border-radius:999px;padding:9px 12px;font:700 13px Arial,sans-serif;outline:none}.goog-logo-link,.goog-te-gadget span{display:none!important}body{top:0!important}.goog-te-banner-frame.skiptranslate{display:none!important}
 </style>
@@ -316,9 +320,9 @@ const OLD_GALLERIES={"entrees": [["camembert", "Camembert rôti"], ["burrata", "
 const main=document.getElementById('menu');
 Object.entries(FORMULES).forEach(([titre,f])=>{
  let sec=document.createElement('section'); sec.className='sec'; sec.id=f.id;
- sec.innerHTML='<h2>'+titre+'</h2><div class="formule-cond">'+f.condition+'</div>'+
- '<div class="formule-prices">'+f.tarifs.map(t=>'<div class="formule-price">'+t[0]+'<strong>'+t[1]+'</strong></div>').join('')+'</div>'+
- '<div class="formule-cols">'+f.groupes.map(g=>'<div class="formule-col"><h3>'+g[0]+'</h3>'+g[1].map(x=>{const p=x.split('|');return '<div class="formule-choice"><strong>'+p[0]+'</strong>'+(p[1]?'<div class="formule-ingredients">'+p[1]+'</div>':'')+'</div>'}).join('')+'</div>').join('')+'</div>';
+ sec.innerHTML='<h2>'+titre+'<span class="fr-original fr-title notranslate" translate="no">'+titre+'</span></h2><div class="formule-cond">'+f.condition+'<span class="fr-original notranslate" translate="no">'+f.condition+'</span></div>'+
+ '<div class="formule-prices">'+f.tarifs.map(t=>'<div class="formule-price"><span>'+t[0]+'</span><span class="fr-original notranslate" translate="no">'+t[0]+'</span><strong>'+t[1]+'</strong></div>').join('')+'</div>'+
+ '<div class="formule-cols">'+f.groupes.map(g=>'<div class="formule-col"><h3>'+g[0]+'<span class="fr-original notranslate" translate="no">'+g[0]+'</span></h3>'+g[1].map(x=>{const p=x.split('|');return '<div class="formule-choice"><strong>'+p[0]+'</strong><span class="fr-original notranslate" translate="no">'+p[0]+'</span>'+(p[1]?'<div class="formule-ingredients">'+p[1]+'<span class="fr-original notranslate" translate="no">'+p[1]+'</span></div>':'')+'</div>'}).join('')+'</div>').join('')+'</div>';
  main.append(sec);
 });
 
@@ -330,19 +334,19 @@ Object.entries(FORMULES).forEach(([titre,f])=>{
   sec.innerHTML='<h2>Menu Bambino</h2><div class="formule-cond">Menu enfant</div>'+
     '<div class="formule-cols">'+
       '<div class="formule-col"><h3>Boissons</h3>'+
-        '<div class="formule-choice"><strong>Fanta</strong></div>'+
-        '<div class="formule-choice"><strong>Coca</strong></div>'+
-        '<div class="formule-choice"><strong>Eau sirop</strong></div>'+
+        '<div class="formule-choice"><strong>Fanta</strong><span class="fr-original notranslate" translate="no">Fanta</span></div>'+
+        '<div class="formule-choice"><strong>Coca</strong><span class="fr-original notranslate" translate="no">Coca</span></div>'+
+        '<div class="formule-choice"><strong>Eau sirop</strong><span class="fr-original notranslate" translate="no">Eau sirop</span></div>'+
       '</div>'+
       '<div class="formule-col"><h3>Plats</h3>'+
-        '<div class="formule-choice"><strong>Aiguillettes de poulet, frites</strong></div>'+
-        '<div class="formule-choice"><strong>Steak haché, frites</strong></div>'+
-        '<div class="formule-choice"><strong>Pizza jambon, fromage</strong></div>'+
+        '<div class="formule-choice"><strong>Aiguillettes de poulet, frites</strong><span class="fr-original notranslate" translate="no">Aiguillettes de poulet, frites</span></div>'+
+        '<div class="formule-choice"><strong>Steak haché, frites</strong><span class="fr-original notranslate" translate="no">Steak haché, frites</span></div>'+
+        '<div class="formule-choice"><strong>Pizza jambon, fromage</strong><span class="fr-original notranslate" translate="no">Pizza jambon, fromage</span></div>'+
       '</div>'+
       '<div class="formule-col"><h3>Desserts</h3>'+
-        '<div class="formule-choice"><strong>2 boules de glace</strong></div>'+
-        '<div class="formule-choice"><strong>Mars glacé</strong></div>'+
-        '<div class="formule-choice"><strong>Brownie crème anglaise</strong></div>'+
+        '<div class="formule-choice"><strong>2 boules de glace</strong><span class="fr-original notranslate" translate="no">2 boules de glace</span></div>'+
+        '<div class="formule-choice"><strong>Mars glacé</strong><span class="fr-original notranslate" translate="no">Mars glacé</span></div>'+
+        '<div class="formule-choice"><strong>Brownie crème anglaise</strong><span class="fr-original notranslate" translate="no">Brownie crème anglaise</span></div>'+
       '</div>'+
     '</div>';
   main.append(sec);
@@ -357,7 +361,7 @@ if (OLD_GALLERIES[galleryKey]) {
     '<figure class="old-photo-card"><img loading="lazy" src="'+OLD_PHOTOS[p[0]]+'" alt="'+p[1]+'"><figcaption>'+p[1]+'</figcaption></figure>'
   ).join('');
   sec.append(gal);
-}rows.forEach(r=>sec.insertAdjacentHTML('beforeend',`<div class="item"><div class="top"><span class="name">${r[0]}</span><span class="dots"></span><span class="price">${euro(r[2])}</span></div>${r[1]?'<div class="desc">'+r[1]+'</div>':''}</div>`));main.append(sec)});
+}rows.forEach(r=>sec.insertAdjacentHTML('beforeend',`<div class="item"><div class="top"><span class="name">${r[0]}<span class="fr-original notranslate" translate="no">${r[0]}</span></span><span class="dots"></span><span class="price">${euro(r[2])}</span></div>${r[1]?'<div class="desc">'+r[1]+'<span class="fr-original notranslate" translate="no">'+r[1]+'</span></div>':''}</div>`));main.append(sec)});
 let g=document.createElement('section');g.className='sec';g.innerHTML='<h2>Garnitures & sauces</h2><div class="grid"><div class="box"><h3>Garnitures</h3><div class="desc">Frites<br>Riz<br>Purée<br>Haricots verts<br>Salade</div></div><div class="box"><h3>Sauces</h3><div class="desc">Poivre<br>Béarnaise<br>Gorgonzola<br>Barbecue</div></div></div>';main.insertBefore(g,document.getElementById('pizzas'));
 let b=document.createElement('section');b.className='sec';b.id='boissons';b.innerHTML='<h2>Boissons & Le Cellier</h2><div class="grid">'+DRINKS.map(x=>`<div class="box"><h3>${x[0]}</h3><div class="desc">${x[1].replaceAll('|','<br>')}</div></div>`).join('')+'</div>';main.append(b);
 document.getElementById('q').oninput=e=>{let s=slug(e.target.value);document.querySelectorAll('.item').forEach(x=>x.style.display=slug(x.innerText).includes(s)?'block':'none')};
@@ -478,6 +482,19 @@ function googleTranslateElementInit(){
     autoDisplay:false
   },'google_translate_element');
 }
+
+// Dès qu'une langue étrangère est choisie, le français original reste visible sous chaque plat.
+(function(){
+  function syncFrench(){
+    const sel=document.querySelector('.goog-te-combo');
+    const translated=document.documentElement.classList.contains('translated-ltr') || document.documentElement.classList.contains('translated-rtl') || (sel && sel.value && sel.value!=='fr');
+    document.body.classList.toggle('show-fr-original',!!translated);
+  }
+  const obs=new MutationObserver(syncFrench);
+  obs.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  document.addEventListener('change',e=>{if(e.target && e.target.classList.contains('goog-te-combo')) setTimeout(syncFrench,150);});
+  setInterval(syncFrench,1000);
+})();
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body></html>
