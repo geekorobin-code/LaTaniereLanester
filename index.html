@@ -243,6 +243,25 @@ html{margin-top:0!important}
 #google_translate_element{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important}
 .skiptranslate:not(.goog-te-gadget){}
 
+
+/* V15 — masque aussi la bannière Google Translate moderne */
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-ORHb,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+iframe.skiptranslate[src*="translate.google"],
+body > .skiptranslate:first-child{
+  display:none!important;
+  visibility:hidden!important;
+  height:0!important;
+  min-height:0!important;
+  border:0!important;
+}
+html,body{
+  margin-top:0!important;
+  top:0!important;
+}
+
 </style>
 <style>
 @media (max-width:700px){
@@ -598,6 +617,13 @@ if(QR_LANG==='ar'){
 
 function setTranslateCookie(lang){
   const value=lang==='fr' ? '/fr/fr' : '/fr/'+lang;
+
+  // Nettoie d'abord l'ancienne sélection Google.
+  document.cookie='googtrans=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+  if(location.hostname){
+    document.cookie='googtrans=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain='+location.hostname;
+  }
+
   document.cookie='googtrans='+value+';path=/;SameSite=Lax';
   if(location.hostname){
     document.cookie='googtrans='+value+';path=/;domain='+location.hostname+';SameSite=Lax';
@@ -606,35 +632,56 @@ function setTranslateCookie(lang){
 if(QR_ALLOWED.has(QR_LANG)) setTranslateCookie(QR_LANG);
 
 function googleTranslateElementInit(){
-  // Les sections de la carte sont générées en JS. On attend qu'elles existent
-  // avant de demander la traduction, sinon chinois/arabe pouvaient rester en français.
   const launch=()=>{
     new google.translate.TranslateElement({
       pageLanguage:'fr',
       includedLanguages:'fr,en,de,ru,zh-CN,ja,es,it,ko,ar,cs',
-      autoDisplay:false
+      autoDisplay:false,
+      multilanguagePage:false
     },'google_translate_element');
 
-    if(QR_LANG!=='fr' && QR_ALLOWED.has(QR_LANG)){
-      let tries=0;
-      const timer=setInterval(()=>{
-        tries++;
-        const combo=document.querySelector('.goog-te-combo');
-        const menuReady=document.querySelectorAll('.sec .item,.formule').length>5;
-        if(combo && menuReady){
-          combo.value=QR_LANG;
-          combo.dispatchEvent(new Event('change',{bubbles:true}));
-          setTimeout(()=>{
-            combo.value=QR_LANG;
-            combo.dispatchEvent(new Event('change',{bubbles:true}));
-          },500);
-          clearInterval(timer);
-        }else if(tries>120) clearInterval(timer);
-      },100);
-    }
+    if(QR_LANG==='fr' || !QR_ALLOWED.has(QR_LANG)) return;
+
+    let tries=0;
+    const applyLanguage=()=>{
+      tries++;
+      const combo=document.querySelector('.goog-te-combo');
+      const menuReady=document.querySelectorAll('.sec .item,.formule').length>5;
+
+      if(combo && menuReady){
+        // Google utilise bien zh-CN pour le chinois simplifié.
+        combo.value=QR_LANG;
+        combo.dispatchEvent(new Event('change',{bubbles:true}));
+
+        // Deuxième passage : certaines langues CJK mettent plus longtemps
+        // à initialiser le moteur que les langues européennes.
+        setTimeout(()=>{
+          const c=document.querySelector('.goog-te-combo');
+          if(c){
+            c.value=QR_LANG;
+            c.dispatchEvent(new Event('change',{bubbles:true}));
+          }
+        },1200);
+
+        setTimeout(()=>{
+          const c=document.querySelector('.goog-te-combo');
+          if(c && c.value!==QR_LANG){
+            c.value=QR_LANG;
+            c.dispatchEvent(new Event('change',{bubbles:true}));
+          }
+        },2800);
+        return;
+      }
+      if(tries<150) setTimeout(applyLanguage,100);
+    };
+    applyLanguage();
   };
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(launch,500));
-  else setTimeout(launch,500);
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(launch,650));
+  }else{
+    setTimeout(launch,650);
+  }
 }
 
 // Dès qu'une langue étrangère est choisie, le français original reste visible sous chaque plat.
