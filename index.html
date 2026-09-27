@@ -273,6 +273,43 @@ html,body{
   pointer-events:none!important;
 }
 
+
+/* V17 — arabe : RTL uniquement dans le contenu, jamais sur le squelette de l'application */
+body.arabic-mode main,
+body.arabic-mode .sec,
+body.arabic-mode .item,
+body.arabic-mode .formule,
+body.arabic-mode .desc,
+body.arabic-mode .name{
+  direction:rtl;
+  text-align:right;
+}
+body.arabic-mode .top{
+  direction:rtl;
+}
+body.arabic-mode .bar,
+body.arabic-mode .barin,
+body.arabic-mode .lang-fab,
+body.arabic-mode .lang-fab-panel,
+body.arabic-mode header{
+  direction:ltr;
+}
+body.arabic-mode .price,
+body.arabic-mode [data-eur],
+body.arabic-mode .local-price{
+  direction:ltr;
+  unicode-bidi:isolate;
+}
+
+/* Neutralise les voiles/overlays Google qui peuvent rester après une traduction RTL */
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+.VIpgJd-ZVi9od-SmfZ-OEVmcd{
+  background:transparent!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+
 </style>
 <style>
 @media (max-width:700px){
@@ -618,13 +655,15 @@ document.getElementById('q').oninput=e=>{let s=slug(e.target.value);document.que
 const QR_LANG = new URLSearchParams(location.search).get('lang') || 'fr';
 const QR_ALLOWED = new Set(['fr','en','de','ru','zh-CN','ja','es','it','ko','ar','cs']);
 
-if(QR_LANG==='ar'){
-  document.documentElement.lang='ar';
-  document.documentElement.dir='rtl';
-}else{
-  document.documentElement.lang=QR_LANG;
-  document.documentElement.dir='ltr';
-}
+document.documentElement.lang=QR_LANG;
+// La structure du site reste toujours LTR pour ne pas casser les éléments fixed/sticky
+// et les calques Google Translate. Le contenu arabe reçoit son RTL séparément.
+document.documentElement.dir='ltr';
+document.body?.classList.toggle('arabic-mode', QR_LANG==='ar');
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.body.classList.toggle('arabic-mode', QR_LANG==='ar');
+});
 
 function setTranslateCookie(lang){
   const value=lang==='fr' ? '/fr/fr' : '/fr/'+lang;
@@ -668,21 +707,15 @@ function googleTranslateElementInit(){
         // à initialiser le moteur que les langues européennes.
         setTimeout(()=>{
           const c=document.querySelector('.goog-te-combo');
-          if(c){
-            c.value=QR_LANG;
-            c.dispatchEvent(new Event('change',{bubbles:true}));
-          }
-        },1200);
-
-        setTimeout(()=>{
-          const c=document.querySelector('.goog-te-combo');
+          // L'arabe est particulièrement lourd sur mobile : ne pas forcer plusieurs
+          // retraductions si Google a déjà pris la langue.
           if(c && c.value!==QR_LANG){
             c.value=QR_LANG;
             c.dispatchEvent(new Event('change',{bubbles:true}));
           }
           document.querySelectorAll('.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,.VIpgJd-ZVi9od-aZ2wEe-OiiCO,.goog-te-spinner-pos')
-            .forEach(el=>{ el.style.pointerEvents='none'; });
-        },2800);
+            .forEach(el=>{ el.style.pointerEvents='none'; el.style.background='transparent'; });
+        }, QR_LANG==='ar' ? 1800 : 1200);
         return;
       }
       if(tries<150) setTimeout(applyLanguage,100);
