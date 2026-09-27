@@ -262,6 +262,17 @@ html,body{
   top:0!important;
 }
 
+
+/* V16 — aucun calque Google invisible ne doit capturer le tactile */
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+.VIpgJd-ZVi9od-SmfZ-OEVmcd,
+.goog-te-spinner-pos,
+.goog-te-balloon-frame,
+#goog-gt-tt{
+  pointer-events:none!important;
+}
+
 </style>
 <style>
 @media (max-width:700px){
@@ -669,6 +680,8 @@ function googleTranslateElementInit(){
             c.value=QR_LANG;
             c.dispatchEvent(new Event('change',{bubbles:true}));
           }
+          document.querySelectorAll('.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,.VIpgJd-ZVi9od-aZ2wEe-OiiCO,.goog-te-spinner-pos')
+            .forEach(el=>{ el.style.pointerEvents='none'; });
         },2800);
         return;
       }
@@ -767,7 +780,30 @@ function googleTranslateElementInit(){
   }
 
   // Les catégories sont générées en JavaScript : on attend leur apparition.
-  const observer=new MutationObserver(()=>updateCurrency());
+  let currencyTimer=null;
+  let currencyBusy=false;
+  const observer=new MutationObserver((mutations)=>{
+    // Ignore les mutations de texte/attributs provoquées par Google Translate
+    // et ne réagit qu'à l'ajout réel de nouveaux éléments contenant des prix.
+    let hasNewPrices=false;
+    for(const m of mutations){
+      for(const node of m.addedNodes){
+        if(node.nodeType===1 &&
+           (node.matches?.('[data-eur]') || node.querySelector?.('[data-eur]'))){
+          hasNewPrices=true;
+          break;
+        }
+      }
+      if(hasNewPrices) break;
+    }
+    if(!hasNewPrices || currencyBusy) return;
+    clearTimeout(currencyTimer);
+    currencyTimer=setTimeout(async()=>{
+      currencyBusy=true;
+      try{ await updateCurrency(); }
+      finally{ currencyBusy=false; }
+    },250);
+  });
   observer.observe(document.body,{childList:true,subtree:true});
 
   document.addEventListener('change',e=>{
