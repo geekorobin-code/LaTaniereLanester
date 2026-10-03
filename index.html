@@ -431,6 +431,30 @@ body.arabic-mode .local-price{
     <div style="margin-top:5px;color:#f5ead9;font-size:clamp(1.35rem,3vw,2rem);font-weight:900">Magret de canard</div>
   </div>
 </div>
+<script>
+(function(){
+  const el = document.getElementById('plat-du-jour');
+  if (!el) return;
+
+  // Toujours basé sur l'heure du restaurant en France, même sur un téléphone étranger.
+  const parts = new Intl.DateTimeFormat('fr-FR', {
+    timeZone: 'Europe/Paris',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(new Date());
+  const get = type => parts.find(p => p.type === type)?.value || '';
+  const day = get('weekday').toLowerCase().replace('.', '');
+  const minutes = Number(get('hour')) * 60 + Number(get('minute'));
+
+  // Plat de la semaine : lundi -> jeudi toute la journée,
+  // vendredi jusqu'à 13h59. Caché dès vendredi 14h, samedi et dimanche.
+  const visible = ['lun','mar','mer','jeu'].includes(day) ||
+                  (day === 'ven' && minutes < 14 * 60);
+  el.style.display = visible ? '' : 'none';
+})();
+</script>
 
 <div class="bar"><div class="barin"><input id="q" placeholder="Rechercher un plat, un ingrédient…"><a href="#menu-taniere">Menu Tanière</a><a href="#menu-midi">Menu midi</a><a href="#menu-bambino">Menu Bambino</a><a href="#entrees">Entrées</a><a href="#plats">Plats</a><a href="#burgers">Burgers</a><a href="#salades">Salades</a><a href="#pizzas">Pizzas</a><a href="#desserts">Desserts</a><a href="#boissons">Boissons</a><div class="lang-wrap"><span class="lang-label">🌐 Langue</span><div id="google_translate_element"></div></div></div></div><main id="menu"></main>
 <script>
@@ -481,7 +505,7 @@ const FORMULES={
 "Terrine de campagne au four"
 ]],
 ["Plats au choix",[
-"½ de poulet rôti et son jus",
+"¼ de poulet rôti et son jus",
 "Pièce du boucher",
 "Fish & Chips",
 "Burger classique",
