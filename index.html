@@ -1106,24 +1106,45 @@ function googleTranslateElementInit(){
 
 
 <script>
-/* Navigation de la barre horizontale sans casser #googtrans(...) */
+/* V31 — navigation catégories fiable, même après une recherche */
 (function(){
   const bar=document.querySelector('.barin');
+  const search=document.getElementById('q');
   if(!bar) return;
+
+  function restoreFullMenu(){
+    // Une recherche peut avoir mis des sections en display:none.
+    // On la vide AVANT de mesurer la position de la catégorie demandée.
+    if(search && search.value){
+      search.value='';
+      search.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+  }
+
+  function goToSection(target){
+    const sticky=document.querySelector('.bar');
+    const offset=(sticky ? sticky.getBoundingClientRect().height : 0)+12;
+    const y=target.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({top:Math.max(0,Math.round(y)),behavior:'smooth'});
+  }
+
   bar.querySelectorAll('a[href^="#"]').forEach(a=>{
     a.addEventListener('click',function(e){
-      const id=this.getAttribute('href').slice(1);
-      const target=document.getElementById(id);
-      if(!target) return;
       e.preventDefault();
 
-      const sticky=document.querySelector('.bar');
-      const offset=(sticky ? sticky.getBoundingClientRect().height : 0)+12;
-      const y=target.getBoundingClientRect().top+window.scrollY-offset;
+      const id=this.getAttribute('href').slice(1);
+      restoreFullMenu();
 
-      window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+      // Attendre que le navigateur ait réaffiché les sections masquées
+      // par la recherche avant de calculer leur vraie position.
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+          const target=document.getElementById(id);
+          if(!target) return;
+          goToSection(target);
+        });
+      });
 
-      // On garde volontairement le hash Google Translate pour ne pas perdre la langue.
       bar.querySelectorAll('a').forEach(x=>x.classList.remove('nav-active'));
       this.classList.add('nav-active');
     });
