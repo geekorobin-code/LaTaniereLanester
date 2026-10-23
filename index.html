@@ -508,6 +508,7 @@ body.pizza-lightbox-open{overflow:hidden}
   <button data-lang="fr">🇫🇷 Français</button>
   <button data-lang="en">🇬🇧 English</button>
   <button data-lang="de">🇩🇪 Deutsch</button>
+  <button data-lang="nl">🇳🇱 Nederlands</button>
   <button data-lang="es">🇪🇸 Español</button>
   <button data-lang="it">🇮🇹 Italiano</button>
   <button data-lang="ru">🇷🇺 Русский</button>
@@ -880,7 +881,7 @@ let b=document.createElement('section');b.className='sec';b.id='boissons';b.inne
 <script>
 // Langue choisie : le visiteur reste toujours sur le vrai site La Tanière.
 const QR_LANG = new URLSearchParams(location.search).get('lang') || 'fr';
-const QR_ALLOWED = new Set(['fr','en','de','ru','zh-CN','ja','es','it','ko','ar','cs']);
+const QR_ALLOWED = new Set(['fr','en','de','ru','zh-CN','ja','es','it','ko','ar','cs','nl']);
 
 document.documentElement.lang=QR_LANG;
 // La structure du site reste toujours LTR pour ne pas casser les éléments fixed/sticky
@@ -912,7 +913,7 @@ function googleTranslateElementInit(){
   const launch=()=>{
     new google.translate.TranslateElement({
       pageLanguage:'fr',
-      includedLanguages:'fr,en,de,ru,zh-CN,ja,es,it,ko,ar,cs',
+      includedLanguages:'fr,en,de,nl,ru,zh-CN,ja,es,it,ko,ar,cs',
       autoDisplay:false,
       multilanguagePage:false
     },'google_translate_element');
@@ -974,7 +975,7 @@ function googleTranslateElementInit(){
 // Prix : l'euro officiel reste affiché, avec la devise locale ajoutée pour les langues concernées.
 (function(){
   const LANG_CURRENCY={
-    'fr':'EUR','en':'GBP','de':'EUR','es':'EUR','it':'EUR',
+    'fr':'EUR','en':'GBP','de':'EUR','nl':'EUR','es':'EUR','it':'EUR',
     'ru':'RUB','zh-CN':'CNY','ja':'JPY','ko':'KRW','cs':'CZK','ar':'AED'
   };
   const SYMBOL={GBP:'£',RUB:'₽',CNY:'¥',JPY:'¥',KRW:'₩',CZK:'Kč',AED:'AED'};
